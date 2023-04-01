@@ -7,6 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Select from 'react-select'
 
 class App extends React.Component {
   constructor(props) {
@@ -27,17 +28,81 @@ class App extends React.Component {
       intelligence: 0,
       perception: 0,
       strength: 0,
-      willpower: 0
+      willpower: 0,
+      accuracyWeapons: [],
+      fightingWeapons: [],
+      weaponFocuses: []
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
     this.handleRandomizeChange = this.handleRandomizeChange.bind(this);
     this.increment = this.increment.bind(this);
+    this.updateAccuracyWeapons = this.updateAccuracyWeapons.bind(this);
+    this.updateFightingWeapons = this.updateFightingWeapons.bind(this);
   }
 
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
   //values are the number of ability advancements it gets, as a range
   threatLevels = [{ label: 'Minor', value: [10, 20] }, { label: 'Moderate', value: [12, 30] }, { label: 'Major', value: [15, 35] }, { label: 'Dire', value: [15, 40] }, { label: 'Legendary', value: [20, 40] }]
+
+  //arcane blast needs to be use willpower mod instead of perception
+  //spiked buckler needs to give +1 defense
+  accuracyWeapons = [
+    { label: 'Arcane Blast (Arcane Blast)', value: 'Arcane Blast', weaponGroup: "Arcane Blast", damage: "1d6", range: "24 Yards", reloadTime: "", mod: 0 },
+    { label: 'Arquebus (Black Powder)', value: 'Arquebus', weaponGroup: "Black Powder", damage: "2d6", range: "12-24 Yards", reloadTime: "Major Action", mod: 3 },
+    { label: 'Blunderbuss (Black Powder)', value: 'Blunderbuss', weaponGroup: "Black Powder", damage: "1d6", range: "6 Yards", reloadTime: "Major Action", mod: 2 },
+    { label: 'Musket (Black Powder)', value: 'Musket', weaponGroup: "Black Powder", damage: "3d6", range: "24-48 Yards", reloadTime: "Major Action", mod: 1 },
+    { label: 'Pistol (Black Powder)', value: 'Pistol', weaponGroup: "Black Powder", damage: "1d6", range: "8-16 Yards", reloadTime: "Major Action", mod: 3 },
+    { label: 'Crossbow (Bows)', value: 'Crossbow', weaponGroup: "Bows", damage: "2d6", range: "30-60 Yards", reloadTime: "Major Action", mod: 1 },
+    { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: "1d6", range: "16-32 Yards", reloadTime: "Minor Action", mod: 1 },
+    { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: "1d6", range: "26-52 Yards", reloadTime: "Minor Action", mod: 3 },
+    { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: 1, mod: "" },
+    { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: "1d6-1", range: "Melee", reloadTime: "", mod: -1 },
+    { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: 3 },
+    { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: -1 },
+    { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: "1d6+1", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: "1d6", range: "Melee", reloadTime: 2, mod: "" },
+    { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: "1d6", range: "6-12 Yards", reloadTime: "Minor Action", mod: 0 },
+    { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: "1d6", range: "14-28 Yards", reloadTime: "Minor Action", mod: 1 },
+    { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: "1d6", range: "12-24 Yards", reloadTime: "Minor Action", mod: 0 },
+    { label: 'Slingshot (Slings)', value: 'Slingshot', weaponGroup: "Slings", damage: "1d3", range: "10-20 Yards", reloadTime: "Minor Action", mod: 1 },
+    { label: 'Club (Staves)', value: 'Club', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Morningstar (Staves)', value: 'Morningstar', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 3 },
+    { label: 'Quarterstaff (Staves)', value: 'Quarterstaff', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 }
+  ]
+
+  fightingWeapons = [
+    { label: 'Battleaxe (Axes)', value: 'Battleaxe', weaponGroup: "Axes", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Throwing Axe (Axes)', value: 'Throwing Axe', weaponGroup: "Axes", damage: "1d6", range: "4-8 Yards", reloadTime: "Minor Action", mod: 2 },
+    { label: 'Two-handed Axe (Axes)', value: 'Two-handed Axe', weaponGroup: "Axes", damage: "3d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Mace (Bludgeons)', value: 'Mace', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Maul (Bludgeons)', value: 'Maul', weaponGroup: "Bludgeons", damage: "1d6", range: "Melee", reloadTime: "", mod: 2 },
+    { label: 'Two-handed Maul (Bludgeons)', value: 'Two-handed Maul', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", mod: 2 },
+    { label: 'Bastard Sword (Heavy Blades)', value: 'Bastard Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Long Sword (Heavy Blades)', value: 'Long Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Two-handed Sword (Heavy Blades)', value: 'Two-handed Sword', weaponGroup: "Heavy Blades", damage: "3d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Heavy Lance (Lances)', value: 'Heavy Lance', weaponGroup: "Lances", damage: "3d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Jousting Lance (Lances)', value: 'Jousting Lance', weaponGroup: "Lances", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Light Lance (Lances)', value: 'Light Lance', weaponGroup: "Lances", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Glaive (Polearms)', value: 'Glaive', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Halberd (Polearms)', value: 'Halberd', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 4 },
+    { label: 'Military Fork (Polearms)', value: 'Military Fork', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Spear (Spears)', value: 'Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
+    { label: 'Throwing Spear (Spears)', value: 'Throwing Spear', weaponGroup: "Spears", damage: "1d6", range: "8-16 Yards", reloadTime: "Minor Action", mod: 3 },
+    { label: 'Two-handed Spear (Spears)', value: 'Two-handed Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", mod: 3 },
+    { label: 'Bite (Natural Weapons)', value: 'Bite', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Claw (Natural Weapons)', value: 'Claw', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Tentacle (Natural Weapons)', value: 'Tentacle', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Gore (Natural Weapons)', value: 'Gore', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Kick (Natural Weapons)', value: 'Kick', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Tail Bash (Natural Weapons)', value: 'Tail Bash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Slam (Natural Weapons)', value: 'Slam', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
+    { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 }
+  ]
 
   async componentDidMount() {
 
@@ -63,13 +128,55 @@ class App extends React.Component {
     if (this.state.randomized) rand = Math.round(this.threatLevels[event.target.value].value[0] + Math.random() * (this.threatLevels[event.target.value].value[1] - this.threatLevels[event.target.value].value[0]));
     this.setState({ advancements: rand });
     this.setState({ totalAdvancements: rand })
-
   }
 
   async handleRandomizeChange(event) {
     await this.setState({ randomized: event.target.checked })
     console.log(this.state.randomized)
     this.handleThreatLevelChange({ target: { value: this.state.selectedThreatLevel } })
+  }
+
+  async updateAccuracyWeapons(event) {
+    let temp = await event.map((weapon) => {
+      if (weapon.weaponGroup === "Arcane Blast") {
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.willpower })
+      }
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.perception })
+    }
+    )
+    this.setState({ accuracyWeapons: temp })
+  }
+
+  async updateFightingWeapons(event) {
+    let temp = await event.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.strength })
+    }
+    )
+    this.setState({ fightingWeapons: temp })
+  }
+
+  async updateAccuracyWeaponDamageMod(oldValue, newValue, isWillPower) {
+    let temp = this.state.accuracyWeapons
+    temp = await temp.map((weapon) => {
+      if (weapon.weaponGroup === "Arcane Blast" && isWillPower) {
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+      }
+      if (isWillPower || weapon.weaponGroup === "Arcane Blast") {
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod })
+      }
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+    }
+    )
+    await this.setState({ accuracyWeapons: temp })
+  }
+
+  async updateFightingWeaponDamageMod(oldValue, newValue) {
+    let temp = this.state.fightingWeapons
+    temp = await temp.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+    }
+    )
+    await this.setState({ fightingWeapons: temp })
   }
 
   increment(e, type, adding) {
@@ -129,6 +236,7 @@ class App extends React.Component {
         this.setState({ advancements: this.state.advancements - adding })
       }
       if (this.state.advancements <= 0 && adding === 1 && this.state.perception >= 0) return;
+      this.updateAccuracyWeaponDamageMod(this.state.perception, this.state.perception + adding, false)
       this.setState({ perception: this.state.perception + adding })
     }
     else if (type === "strength") {
@@ -137,6 +245,7 @@ class App extends React.Component {
         this.setState({ advancements: this.state.advancements - adding })
       }
       if (this.state.advancements <= 0 && adding === 1 && this.state.strength >= 0) return;
+      this.updateFightingWeaponDamageMod(this.state.strength, this.state.strength + adding, true)
       this.setState({ strength: this.state.strength + adding })
     }
     else if (type === "willpower") {
@@ -145,6 +254,7 @@ class App extends React.Component {
         this.setState({ advancements: this.state.advancements - adding })
       }
       if (this.state.advancements <= 0 && adding === 1 && this.state.willpower >= 0) return;
+      this.updateAccuracyWeaponDamageMod(this.state.willpower, this.state.willpower + adding, true)
       this.setState({ willpower: this.state.willpower + adding })
     }
   }
@@ -174,7 +284,49 @@ class App extends React.Component {
                 <label>
                   {"\n"}Randomize advancement amount?:
                   <input type="checkbox" checked={this.state.randomized} onChange={this.handleRandomizeChange} />
+                </label>
+                <br></br><br></br>
+                <label>
+                  <text>Weapons</text>
+                  <Table>
+                    <TableRow>
+                      <TableCell>
+                        <label>
+                          <Select
+                            defaultValue={[]}
+                            isMulti
+                            placeholder="Accuracy"
+                            closeMenuOnSelect={false}
+                            name="Accuracy Weapons"
+                            options={this.accuracyWeapons}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            onChange={this.updateAccuracyWeapons}
+                          />
+                        </label>
+                      </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            defaultValue={[]}
+                            isMulti
+                            placeholder="Fighting"
+                            closeMenuOnSelect={false}
+                            name="Fighting Weapons"
+                            options={this.fightingWeapons}
+                            className="fighting-multi-select"
+                            classNamePrefix="fighting-select"
+                            onChange={this.updateFightingWeapons}
+                          />
+                        </label>
+                      </TableCell>
+                    </TableRow>
+                  </Table>
 
+
+                </label>
+
+                <label>
 
                   <br></br><br></br>
                   <text>
@@ -184,6 +336,8 @@ class App extends React.Component {
                   <text>TOTAL ADVANCEMENTS: {Math.max(0, this.state.accuracy) + Math.max(0, this.state.communication) + Math.max(0, this.state.constitution) + Math.max(0, this.state.dexterity) + Math.max(0, this.state.fighting) + Math.max(0, this.state.intelligence) + Math.max(0, this.state.perception) + Math.max(0, this.state.strength) + Math.max(0, this.state.willpower)} / {this.state.totalAdvancements}</text>
 
                 </label>
+
+
 
                 <br></br>
                 <Table sx={{ maxWidth: 550 }}>
@@ -204,7 +358,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.accuracy}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10} }>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                        <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -223,7 +377,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.communication}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>Can they talk?</text>
+                        <text style={{ fontSize: 10 }}>Can they talk?</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -242,7 +396,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.constitution}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>The more constitution the more health, so it should be high for higher threats.</text>
+                        <text style={{ fontSize: 10 }}>The more constitution the more health, so it should be high for higher threats.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -261,7 +415,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.dexterity}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>4 Dexterity is very good, 6 is extraordinary. Anything higher is annoying.</text>
+                        <text style={{ fontSize: 10 }}>4 Dexterity is very good, 6 is extraordinary. Anything higher is annoying.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -280,7 +434,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.fighting}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                        <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -299,7 +453,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.intelligence}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>Can they think?</text>
+                        <text style={{ fontSize: 10 }}>Can they think?</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -318,7 +472,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.perception}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>If they use accuracy weapons this should be high.</text>
+                        <text style={{ fontSize: 10 }}>If they use accuracy weapons this should be high.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -337,7 +491,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.strength}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>If they use fighting weapons this should be high.</text>
+                        <text style={{ fontSize: 10 }}>If they use fighting weapons this should be high.</text>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -356,7 +510,7 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>{this.state.willpower}</TableCell>
                       <TableCell>
-                        <text style={{ fontSize: 10}}>The higher this is the less likely they are to run from a fight.</text>
+                        <text style={{ fontSize: 10 }}>The higher this is the less likely they are to run from a fight.</text>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -366,6 +520,8 @@ class App extends React.Component {
             </TableCell>
             <TableCell>
               <text>{this.state.name}</text>
+              {this.state.accuracyWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
+              {this.state.fightingWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
             </TableCell>
           </TableRow>
         </Table>
