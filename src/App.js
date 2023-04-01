@@ -51,60 +51,60 @@ class App extends React.Component {
   //arcane blast needs to be use willpower mod instead of perception
   //spiked buckler needs to give +1 defense
   accuracyWeapons = [
-    { label: 'Arcane Blast (Arcane Blast)', value: 'Arcane Blast', weaponGroup: "Arcane Blast", damage: "1d6", range: "24 Yards", reloadTime: "", mod: 0 },
-    { label: 'Arquebus (Black Powder)', value: 'Arquebus', weaponGroup: "Black Powder", damage: "2d6", range: "12-24 Yards", reloadTime: "Major Action", mod: 3 },
-    { label: 'Blunderbuss (Black Powder)', value: 'Blunderbuss', weaponGroup: "Black Powder", damage: "1d6", range: "6 Yards", reloadTime: "Major Action", mod: 2 },
-    { label: 'Musket (Black Powder)', value: 'Musket', weaponGroup: "Black Powder", damage: "3d6", range: "24-48 Yards", reloadTime: "Major Action", mod: 1 },
-    { label: 'Pistol (Black Powder)', value: 'Pistol', weaponGroup: "Black Powder", damage: "1d6", range: "8-16 Yards", reloadTime: "Major Action", mod: 3 },
-    { label: 'Crossbow (Bows)', value: 'Crossbow', weaponGroup: "Bows", damage: "2d6", range: "30-60 Yards", reloadTime: "Major Action", mod: 1 },
-    { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: "1d6", range: "16-32 Yards", reloadTime: "Minor Action", mod: 1 },
-    { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: "1d6", range: "26-52 Yards", reloadTime: "Minor Action", mod: 3 },
-    { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: 1, mod: "" },
-    { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: "1d6-1", range: "Melee", reloadTime: "", mod: -1 },
-    { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: 3 },
-    { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", mod: -1 },
-    { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: "1d6+1", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: "1d6", range: "Melee", reloadTime: 2, mod: "" },
-    { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: "1d6", range: "6-12 Yards", reloadTime: "Minor Action", mod: 0 },
-    { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: "1d6", range: "14-28 Yards", reloadTime: "Minor Action", mod: 1 },
-    { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: "1d6", range: "12-24 Yards", reloadTime: "Minor Action", mod: 0 },
-    { label: 'Slingshot (Slings)', value: 'Slingshot', weaponGroup: "Slings", damage: "1d3", range: "10-20 Yards", reloadTime: "Minor Action", mod: 1 },
-    { label: 'Club (Staves)', value: 'Club', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Morningstar (Staves)', value: 'Morningstar', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 3 },
-    { label: 'Quarterstaff (Staves)', value: 'Quarterstaff', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 }
+    { label: 'Arcane Blast (Arcane Blast)', value: 'Arcane Blast', weaponGroup: "Arcane Blast", damage: "1d6", range: "24 Yards", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Arquebus (Black Powder)', value: 'Arquebus', weaponGroup: "Black Powder", damage: "2d6", range: "12-24 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Blunderbuss (Black Powder)', value: 'Blunderbuss', weaponGroup: "Black Powder", damage: "1d6", range: "6 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 2 },
+    { label: 'Musket (Black Powder)', value: 'Musket', weaponGroup: "Black Powder", damage: "3d6", range: "24-48 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Pistol (Black Powder)', value: 'Pistol', weaponGroup: "Black Powder", damage: "1d6", range: "8-16 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Crossbow (Bows)', value: 'Crossbow', weaponGroup: "Bows", damage: "2d6", range: "30-60 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: "1d6", range: "16-32 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: "1d6", range: "26-52 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: 1, focusMod: 0, statMod: 0, mod: "" },
+    { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: "1d6-1", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1 },
+    { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1 },
+    { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: "1d6+1", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: "1d6", range: "Melee", reloadTime: 2, focusMod: 0, statMod: 0, mod: "" },
+    { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: "1d6", range: "6-12 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: "1d6", range: "14-28 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: "1d6", range: "12-24 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Slingshot (Slings)', value: 'Slingshot', weaponGroup: "Slings", damage: "1d3", range: "10-20 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Club (Staves)', value: 'Club', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Morningstar (Staves)', value: 'Morningstar', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Quarterstaff (Staves)', value: 'Quarterstaff', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 }
   ]
 
   fightingWeapons = [
-    { label: 'Battleaxe (Axes)', value: 'Battleaxe', weaponGroup: "Axes", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Throwing Axe (Axes)', value: 'Throwing Axe', weaponGroup: "Axes", damage: "1d6", range: "4-8 Yards", reloadTime: "Minor Action", mod: 2 },
-    { label: 'Two-handed Axe (Axes)', value: 'Two-handed Axe', weaponGroup: "Axes", damage: "3d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Mace (Bludgeons)', value: 'Mace', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Maul (Bludgeons)', value: 'Maul', weaponGroup: "Bludgeons", damage: "1d6", range: "Melee", reloadTime: "", mod: 2 },
-    { label: 'Two-handed Maul (Bludgeons)', value: 'Two-handed Maul', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", mod: 2 },
-    { label: 'Bastard Sword (Heavy Blades)', value: 'Bastard Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Long Sword (Heavy Blades)', value: 'Long Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Two-handed Sword (Heavy Blades)', value: 'Two-handed Sword', weaponGroup: "Heavy Blades", damage: "3d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Heavy Lance (Lances)', value: 'Heavy Lance', weaponGroup: "Lances", damage: "3d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Jousting Lance (Lances)', value: 'Jousting Lance', weaponGroup: "Lances", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Light Lance (Lances)', value: 'Light Lance', weaponGroup: "Lances", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Glaive (Polearms)', value: 'Glaive', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Halberd (Polearms)', value: 'Halberd', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 4 },
-    { label: 'Military Fork (Polearms)', value: 'Military Fork', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Spear (Spears)', value: 'Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", mod: 0 },
-    { label: 'Throwing Spear (Spears)', value: 'Throwing Spear', weaponGroup: "Spears", damage: "1d6", range: "8-16 Yards", reloadTime: "Minor Action", mod: 3 },
-    { label: 'Two-handed Spear (Spears)', value: 'Two-handed Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", mod: 3 },
-    { label: 'Bite (Natural Weapons)', value: 'Bite', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Claw (Natural Weapons)', value: 'Claw', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Tentacle (Natural Weapons)', value: 'Tentacle', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Gore (Natural Weapons)', value: 'Gore', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Kick (Natural Weapons)', value: 'Kick', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Tail Bash (Natural Weapons)', value: 'Tail Bash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Slam (Natural Weapons)', value: 'Slam', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
-    { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 }
+    { label: 'Battleaxe (Axes)', value: 'Battleaxe', weaponGroup: "Axes", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Throwing Axe (Axes)', value: 'Throwing Axe', weaponGroup: "Axes", damage: "1d6", range: "4-8 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 2 },
+    { label: 'Two-handed Axe (Axes)', value: 'Two-handed Axe', weaponGroup: "Axes", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Mace (Bludgeons)', value: 'Mace', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Maul (Bludgeons)', value: 'Maul', weaponGroup: "Bludgeons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2 },
+    { label: 'Two-handed Maul (Bludgeons)', value: 'Two-handed Maul', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2 },
+    { label: 'Bastard Sword (Heavy Blades)', value: 'Bastard Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Long Sword (Heavy Blades)', value: 'Long Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Two-handed Sword (Heavy Blades)', value: 'Two-handed Sword', weaponGroup: "Heavy Blades", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Heavy Lance (Lances)', value: 'Heavy Lance', weaponGroup: "Lances", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Jousting Lance (Lances)', value: 'Jousting Lance', weaponGroup: "Lances", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Light Lance (Lances)', value: 'Light Lance', weaponGroup: "Lances", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Glaive (Polearms)', value: 'Glaive', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Halberd (Polearms)', value: 'Halberd', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 4 },
+    { label: 'Military Fork (Polearms)', value: 'Military Fork', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Spear (Spears)', value: 'Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
+    { label: 'Throwing Spear (Spears)', value: 'Throwing Spear', weaponGroup: "Spears", damage: "1d6", range: "8-16 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Two-handed Spear (Spears)', value: 'Two-handed Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
+    { label: 'Bite (Natural Weapons)', value: 'Bite', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Claw (Natural Weapons)', value: 'Claw', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Tentacle (Natural Weapons)', value: 'Tentacle', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Gore (Natural Weapons)', value: 'Gore', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Kick (Natural Weapons)', value: 'Kick', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Tail Bash (Natural Weapons)', value: 'Tail Bash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Slam (Natural Weapons)', value: 'Slam', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
+    { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 }
   ]
 
 
@@ -144,11 +144,25 @@ class App extends React.Component {
     this.setState({ perception: 0 })
     this.setState({ selectedThreatLevel: event.target.value })
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
+
+    this.resetWeaponStateDamage();
+
     //determine how many points of advancement we get by using a random number gen between value array min and max
     let rand = this.threatLevels[event.target.value].value[1];
     if (this.state.randomized) rand = Math.round(this.threatLevels[event.target.value].value[0] + Math.random() * (this.threatLevels[event.target.value].value[1] - this.threatLevels[event.target.value].value[0]));
     this.setState({ advancements: rand });
     this.setState({ totalAdvancements: rand })
+  }
+
+  resetWeaponStateDamage() {
+    let accuracy = this.state.accuracyWeapons.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod })
+    })
+    let fighting = this.state.fightingWeapons.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod })
+    })
+    this.setState({accuracyWeapons: accuracy})
+    this.setState({fightingWeapons: fighting})
   }
 
   async handleRandomizeChange(event) {
@@ -160,9 +174,9 @@ class App extends React.Component {
   async updateAccuracyWeapons(event) {
     let temp = await event.map((weapon) => {
       if (weapon.weaponGroup === "Arcane Blast") {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.willpower })
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.willpower, mod: weapon.mod })
       }
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.perception })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.perception, mod: weapon.mod })
     }
     )
     this.setState({ accuracyWeapons: temp })
@@ -170,7 +184,7 @@ class App extends React.Component {
 
   async updateFightingWeapons(event) {
     let temp = await event.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod + this.state.strength })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.strength, mod: weapon.mod })
     }
     )
     this.setState({ fightingWeapons: temp })
@@ -180,12 +194,12 @@ class App extends React.Component {
     let temp = this.state.accuracyWeapons
     temp = await temp.map((weapon) => {
       if (weapon.weaponGroup === "Arcane Blast" && isWillPower) {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
       }
       if (isWillPower || weapon.weaponGroup === "Arcane Blast") {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: weapon.mod })
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
       }
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
     }
     )
     await this.setState({ accuracyWeapons: temp })
@@ -194,7 +208,7 @@ class App extends React.Component {
   async updateFightingWeaponDamageMod(oldValue, newValue) {
     let temp = this.state.fightingWeapons
     temp = await temp.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, mod: (weapon.mod - oldValue) + newValue })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
     }
     )
     await this.setState({ fightingWeapons: temp })
@@ -412,16 +426,16 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell style={{ width: '30%' }}>
                         <label>
-                        <Select
-                          value={this.state.accuracyFocuses}
-                          isMulti
-                          placeholder="Focuses"
-                          name="AccuracyFocuses"
-                          className="focuses-multi-select"
-                          classNamePrefix="focus-select"
-                          isDisabled={true}
-                          isClearable={false}
-                        />
+                          <Select
+                            value={this.state.accuracyFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="AccuracyFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isDisabled={true}
+                            isClearable={false}
+                          />
                         </label>
                       </TableCell>
                     </TableRow>
@@ -502,16 +516,16 @@ class App extends React.Component {
                       </TableCell>
                       <TableCell>
                         <label>
-                        <Select
-                          value={this.state.fightingFocuses}
-                          isMulti
-                          placeholder="Focuses"
-                          name="FightingFocuses"
-                          className="focuses-multi-select"
-                          classNamePrefix="focus-select"
-                          isDisabled={true}
-                          isClearable={false}
-                        />
+                          <Select
+                            value={this.state.fightingFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="FightingFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isDisabled={true}
+                            isClearable={false}
+                          />
                         </label>
                       </TableCell>
                     </TableRow>
@@ -598,8 +612,8 @@ class App extends React.Component {
             </TableCell>
             <TableCell style={{ height: "100%", verticalAlign: "Top" }}>
               <text>{this.state.name}</text>
-              {this.state.accuracyWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
-              {this.state.fightingWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
+              {this.state.accuracyWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))};
+              {this.state.fightingWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))};
             </TableCell>
           </TableRow>
         </Table>
