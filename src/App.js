@@ -31,7 +31,9 @@ class App extends React.Component {
       willpower: 0,
       accuracyWeapons: [],
       fightingWeapons: [],
-      weaponFocuses: []
+      weaponFocuses: [],
+      accuracyFocuses: [],
+      fightingFocuses: []
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -39,6 +41,7 @@ class App extends React.Component {
     this.increment = this.increment.bind(this);
     this.updateAccuracyWeapons = this.updateAccuracyWeapons.bind(this);
     this.updateFightingWeapons = this.updateFightingWeapons.bind(this);
+    this.updateWeaponFocuses = this.updateWeaponFocuses.bind(this);
   }
 
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
@@ -102,6 +105,24 @@ class App extends React.Component {
     { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
     { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 },
     { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", mod: 1 }
+  ]
+
+
+  weaponFocuses = [
+    { label: "Arcane Blast", value: 'Arcane Blast', group: 'Accuracy' },
+    { label: "Axes", value: 'Axes', group: 'Fighting' },
+    { label: "Black Powder", value: 'Black Powder', group: 'Accuracy' },
+    { label: "Bludgeons", value: 'Bludgeons', group: 'Fighting' },
+    { label: "Bows", value: 'Bows', group: 'Accuracy' },
+    { label: "Dueling", value: 'Dueling', group: 'Accuracy' },
+    { label: "Heavy Blades", value: 'Heavy Blades', group: 'Fighting' },
+    { label: "Lances", value: 'Lances', group: 'Fighting' },
+    { label: "Light Blades", value: 'Light Blades', group: 'Accuracy' },
+    { label: "Polearms", value: 'Polearms', group: 'Fighting' },
+    { label: "Slings", value: 'Slings', group: 'Accuracy' },
+    { label: "Spears", value: 'Spears', group: 'Fighting' },
+    { label: "Staves", value: 'Staves', group: 'Accuracy' },
+    { label: "Natural Weapons", value: 'Natural Weapons', group: 'Fighting' }
   ]
 
   async componentDidMount() {
@@ -177,6 +198,22 @@ class App extends React.Component {
     }
     )
     await this.setState({ fightingWeapons: temp })
+  }
+
+  async updateWeaponFocuses(event) {
+    let fighting = await event.map((focus) => {
+      if (focus.group == "Fighting")
+        return (focus)
+    });
+    let accuracy = await event.map((focus) => {
+      if (focus.group == "Accuracy")
+        return (focus)
+    })
+    console.log(accuracy);
+    await this.setState({ accuracyFocuses: accuracy })
+    this.setState({ fightingFocuses: fighting })
+    await this.setState({ weaponFocuses: event })
+    console.log(this.state.accuracyFocuses)
   }
 
   increment(e, type, adding) {
@@ -264,7 +301,7 @@ class App extends React.Component {
       <div>
         <Table>
           <TableRow>
-            <TableCell>
+            <TableCell style={{ width: '40%' }}>
               <form onSubmit={this.handleSubmit}>        <label>
                 Name:
                 <input type="text" value={this.state.name} onChange={this.handleNameChange} /></label>
@@ -290,7 +327,7 @@ class App extends React.Component {
                   <text>Weapons</text>
                   <Table>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '50%' }}>
                         <label>
                           <Select
                             defaultValue={[]}
@@ -305,7 +342,7 @@ class App extends React.Component {
                           />
                         </label>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '50%' }}>
                         <label>
                           <Select
                             defaultValue={[]}
@@ -322,8 +359,21 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                   </Table>
-
-
+                  <label>
+                    Weapon Focuses
+                    <br></br>
+                    <Select
+                      defaultValue={[]}
+                      isMulti
+                      placeholder="Focuses"
+                      closeMenuOnSelect={false}
+                      name="Focuses"
+                      options={this.weaponFocuses}
+                      className="focuses-multi-select"
+                      classNamePrefix="focus-select"
+                      onChange={this.updateWeaponFocuses}
+                    />
+                  </label>
                 </label>
 
                 <label>
@@ -340,25 +390,39 @@ class App extends React.Component {
 
 
                 <br></br>
-                <Table sx={{ maxWidth: 550 }}>
+                <Table>
                   <TableBody>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%' }}>
                         <button onClick={(e) => { this.increment(e, "accuracy", -1) }}>
                           -
                         </button>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%' }}>
                         <center>Accuracy</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%' }}>
                         <button onClick={(e) => { this.increment(e, "accuracy", 1) }}>
                           +
                         </button>
-                      </TableCell>
-                      <TableCell>{this.state.accuracy}</TableCell>
-                      <TableCell>
+                      </TableCell >
+                      <TableCell style={{ width: '10%' }}>{this.state.accuracy}</TableCell>
+                      <TableCell style={{ width: '30%' }}>
                         <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                      </TableCell>
+                      <TableCell style={{ width: '30%' }}>
+                        <label>
+                        <Select
+                          value={this.state.accuracyFocuses}
+                          isMulti
+                          placeholder="Focuses"
+                          name="AccuracyFocuses"
+                          className="focuses-multi-select"
+                          classNamePrefix="focus-select"
+                          isDisabled={true}
+                          isClearable={false}
+                        />
+                        </label>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -435,6 +499,20 @@ class App extends React.Component {
                       <TableCell>{this.state.fighting}</TableCell>
                       <TableCell>
                         <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                      </TableCell>
+                      <TableCell>
+                        <label>
+                        <Select
+                          value={this.state.fightingFocuses}
+                          isMulti
+                          placeholder="Focuses"
+                          name="FightingFocuses"
+                          className="focuses-multi-select"
+                          classNamePrefix="focus-select"
+                          isDisabled={true}
+                          isClearable={false}
+                        />
+                        </label>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -518,7 +596,7 @@ class App extends React.Component {
 
               </form>
             </TableCell>
-            <TableCell>
+            <TableCell style={{ height: "100%", verticalAlign: "Top" }}>
               <text>{this.state.name}</text>
               {this.state.accuracyWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
               {this.state.fightingWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod}</li>))};
