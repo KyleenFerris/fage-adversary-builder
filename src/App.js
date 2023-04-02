@@ -1,13 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
 import * as React from 'react';
+import { Text, StyleSheet, View, TextInput } from 'react-native';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Select from 'react-select'
+import Select from 'react-select';
+
+const styles = StyleSheet.create({
+
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
 
 class App extends React.Component {
   constructor(props) {
@@ -33,7 +42,14 @@ class App extends React.Component {
       fightingWeapons: [],
       weaponFocuses: [],
       accuracyFocuses: [],
-      fightingFocuses: []
+      communicationFocuses: [],
+      constitutionFocuses: [],
+      dexterityFocuses: [],
+      fightingFocuses: [],
+      intelligenceFocuses: [],
+      perceptionFocuses: [],
+      strengthFocuses: [],
+      willpowerFocuses: []
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -42,7 +58,16 @@ class App extends React.Component {
     this.updateAccuracyWeapons = this.updateAccuracyWeapons.bind(this);
     this.updateFightingWeapons = this.updateFightingWeapons.bind(this);
     this.updateWeaponFocuses = this.updateWeaponFocuses.bind(this);
+    this.updateCommunicationFocuses = this.updateCommunicationFocuses.bind(this);
+    this.updateConstitutionFocuses = this.updateConstitutionFocuses.bind(this);
+    this.updateDexterityFocuses = this.updateDexterityFocuses.bind(this);
+    this.updateIntelligenceFocuses = this.updateIntelligenceFocuses.bind(this);
+    this.updatePerceptionFocuses = this.updatePerceptionFocuses.bind(this);
+    this.updateStrengthFocuses = this.updateStrengthFocuses.bind(this);
+    this.updateWillpowerFocuses = this.updateWillpowerFocuses.bind(this);
   }
+
+
 
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
   //values are the number of ability advancements it gets, as a range
@@ -115,6 +140,7 @@ class App extends React.Component {
     { label: "Bludgeons", value: 'Bludgeons', group: 'Fighting' },
     { label: "Bows", value: 'Bows', group: 'Accuracy' },
     { label: "Dueling", value: 'Dueling', group: 'Accuracy' },
+    { label: "Grenades", value: 'Grenades', group: 'Accuracy' },
     { label: "Heavy Blades", value: 'Heavy Blades', group: 'Fighting' },
     { label: "Lances", value: 'Lances', group: 'Fighting' },
     { label: "Light Blades", value: 'Light Blades', group: 'Accuracy' },
@@ -123,6 +149,89 @@ class App extends React.Component {
     { label: "Spears", value: 'Spears', group: 'Fighting' },
     { label: "Staves", value: 'Staves', group: 'Accuracy' },
     { label: "Natural Weapons", value: 'Natural Weapons', group: 'Fighting' }
+  ]
+
+  communicationFocuses = [
+    { label: "Animal Handling", value: "Animal Handling" },
+    { label: "Bargaining", value: "Bargaining" },
+    { label: "Deception", value: "Deception" },
+    { label: "Disguise", value: "Disguise" },
+    { label: "Etiquette", value: "Etiquette" },
+    { label: "Gambling", value: "Gambling" },
+    { label: "Investigation", value: "Investigation" },
+    { label: "Leadership", value: "Leadership" },
+    { label: "Performance", value: "Performance" },
+    { label: "Persuasion", value: "Persuasion" },
+    { label: "Seduction", value: "Seduction" }
+  ]
+
+  constitutionFocuses = [
+    { label: "Rowing", value: "Rowing" },
+    { label: "Running", value: "Running" },
+    { label: "Stamina", value: "Stamina" },
+    { label: "Swimming", value: "Swimming" },
+    { label: "Tolerance", value: "Tolerance" }
+  ]
+
+  dexterityFocuses = [
+    { label: "Acrobatics", value: "Acrobatic" },
+    { label: "Calligraphy", value: "Calligraphy" },
+    { label: "Crafting", value: "Crafting" },
+    { label: "Initiative", value: "Initiative" },
+    { label: "Legerdemain", value: "Legerdemain" },
+    { label: "Lock Picking", value: "Lock Picking" },
+    { label: "Riding", value: "Riding" },
+    { label: "Sailing", value: "Sailing" },
+    { label: "Stealth", value: "Stealth" },
+    { label: "Traps", value: "Traps" }
+  ]
+
+  intelligenceFocuses = [
+    { label: "Arcane Lore", value: "Arcane Lore" },
+    { label: "Brewing", value: "Brewing" },
+    { label: "Cartography", value: "Cartography" },
+    { label: "Cryptography", value: "Cryptography" },
+    { label: "Cultural Lore", value: "Cultural Lore" },
+    { label: "Engineering", value: "Engineering" },
+    { label: "Evaluation", value: "Evaluation" },
+    { label: "Healing", value: "Healing" },
+    { label: "Heraldry", value: "Heraldry" },
+    { label: "Historical Lore", value: "Historical Lore" },
+    { label: "Military Lore", value: "Military Lore" },
+    { label: "Musical Lore", value: "Musical Lore" },
+    { label: "Natural Lore", value: "Natural Lore" },
+    { label: "Navigation", value: "Navigation" },
+    { label: "Religious Lore", value: "Religious Lore" },
+    { label: "Research", value: "Research" },
+    { label: "Thieves' Lore", value: "Thieves' Lore" },
+    { label: "Writing", value: "Writing" }
+  ]
+
+  perceptionFocuses = [
+    { label: "Empathy", value: "Empathy" },
+    { label: "Hearing", value: "Hearing" },
+    { label: "Searching", value: "Searching" },
+    { label: "Seeing", value: "Seeing" },
+    { label: "Smelling", value: "Smelling" },
+    { label: "Tasting", value: "Tasting" },
+    { label: "Touching", value: "Touching" },
+    { label: "Tracking", value: "Tracking" }
+  ]
+
+  strengthFocuses = [
+    { label: "Climbing", value: "Climbing" },
+    { label: "Driving", value: "Driving" },
+    { label: "Intimidation", value: "Intimidation" },
+    { label: "Jumping", value: "Jumping" },
+    { label: "Might", value: "Might" },
+    { label: "Smithing", value: "Smithing" }
+  ]
+
+  willpowerFocuses = [
+    { label: "Courage", value: "Courage" },
+    { label: "Faith", value: "Faith" },
+    { label: "Morale", value: "Morale" },
+    { label: "Self-Discipline", value: "Self-Discipline" }
   ]
 
   async componentDidMount() {
@@ -161,13 +270,12 @@ class App extends React.Component {
     let fighting = this.state.fightingWeapons.map((weapon) => {
       return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod })
     })
-    this.setState({accuracyWeapons: accuracy})
-    this.setState({fightingWeapons: fighting})
+    this.setState({ accuracyWeapons: accuracy })
+    this.setState({ fightingWeapons: fighting })
   }
 
   async handleRandomizeChange(event) {
     await this.setState({ randomized: event.target.checked })
-    console.log(this.state.randomized)
     this.handleThreatLevelChange({ target: { value: this.state.selectedThreatLevel } })
   }
 
@@ -215,19 +323,77 @@ class App extends React.Component {
   }
 
   async updateWeaponFocuses(event) {
-    let fighting = await event.map((focus) => {
+    let fighting = []
+    let accuracy = []
+    event.map((focus) => {
       if (focus.group == "Fighting")
-        return (focus)
+        fighting.push(focus)
+      else
+        accuracy.push(focus)
     });
-    let accuracy = await event.map((focus) => {
-      if (focus.group == "Accuracy")
-        return (focus)
-    })
-    console.log(accuracy);
     await this.setState({ accuracyFocuses: accuracy })
-    this.setState({ fightingFocuses: fighting })
+    await this.setState({ fightingFocuses: fighting })
     await this.setState({ weaponFocuses: event })
-    console.log(this.state.accuracyFocuses)
+    this.setWeaponFocusBonuses()
+  }
+
+  updateCommunicationFocuses(event) {
+    this.setState({ communicationFocuses: event })
+  }
+  updateConstitutionFocuses(event) {
+    this.setState({ constitutionFocuses: event })
+  }
+  updateDexterityFocuses(event) {
+    this.setState({ dexterityFocuses: event })
+  }
+  updateIntelligenceFocuses(event) {
+    this.setState({ intelligenceFocuses: event })
+  }
+  updatePerceptionFocuses(event) {
+    this.setState({ perceptionFocuses: event })
+  }
+  updateStrengthFocuses(event) {
+    this.setState({ strengthFocuses: event })
+  }
+  updateWillpowerFocuses(event) {
+    this.setState({ willpowerFocuses: event })
+  }
+
+  setWeaponFocusBonuses() {
+
+    
+    let accuracy = this.state.accuracyWeapons
+    accuracy = accuracy.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod })
+    })
+    let fighting = this.state.fightingWeapons
+    fighting = fighting.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod })
+    })
+
+    this.state.accuracyFocuses.map((focus) => {
+      accuracy = accuracy.map((weapon) => {
+        if (weapon.weaponGroup === focus.value) {
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod })
+        }
+        else
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
+
+      })
+    })
+    this.state.fightingFocuses.map((focus) => {
+      fighting = fighting.map((weapon) => {
+        if (weapon.weaponGroup === focus.value) {
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod })
+        }
+        else
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
+      })
+    })
+
+    this.setState({ accuracyWeapons: accuracy })
+    this.setState({ fightingWeapons: fighting })
+
   }
 
   increment(e, type, adding) {
@@ -317,7 +483,7 @@ class App extends React.Component {
           <TableRow>
             <TableCell style={{ width: '40%' }}>
               <form onSubmit={this.handleSubmit}>        <label>
-                Name:
+                <Text style={styles.titleText}>Name: </Text>
                 <input type="text" value={this.state.name} onChange={this.handleNameChange} /></label>
                 <br></br>
                 <label>
@@ -380,7 +546,6 @@ class App extends React.Component {
                       defaultValue={[]}
                       isMulti
                       placeholder="Focuses"
-                      closeMenuOnSelect={false}
                       name="Focuses"
                       options={this.weaponFocuses}
                       className="focuses-multi-select"
@@ -389,17 +554,26 @@ class App extends React.Component {
                     />
                   </label>
                 </label>
+                <br></br>
 
-                <label>
-
-                  <br></br><br></br>
-                  <text>
-                    This adversary can have between {this.threatLevels[this.state.selectedThreatLevel].value[0]} and {this.threatLevels[this.state.selectedThreatLevel].value[1]} stat advancements.
-                  </text>
-                  <br></br>
-                  <text>TOTAL ADVANCEMENTS: {Math.max(0, this.state.accuracy) + Math.max(0, this.state.communication) + Math.max(0, this.state.constitution) + Math.max(0, this.state.dexterity) + Math.max(0, this.state.fighting) + Math.max(0, this.state.intelligence) + Math.max(0, this.state.perception) + Math.max(0, this.state.strength) + Math.max(0, this.state.willpower)} / {this.state.totalAdvancements}</text>
-
-                </label>
+                <text>
+                  This adversary can have between {this.threatLevels[this.state.selectedThreatLevel].value[0]} and {this.threatLevels[this.state.selectedThreatLevel].value[1]} stat advancements.
+                </text>
+                <br></br>
+                <Table>
+                  <TableRow>
+                    <TableCell>
+                      <View style={{ justifyContent: 'space-between' }}>
+                        <Text>TOTAL ADVANCEMENTS:</Text><Text> {Math.max(0, this.state.accuracy) + Math.max(0, this.state.communication) + Math.max(0, this.state.constitution) + Math.max(0, this.state.dexterity) + Math.max(0, this.state.fighting) + Math.max(0, this.state.intelligence) + Math.max(0, this.state.perception) + Math.max(0, this.state.strength) + Math.max(0, this.state.willpower)} / {this.state.totalAdvancements}</Text>
+                      </View>
+                    </TableCell>
+                    <TableCell>
+                      <View style={{ justifyContent: 'space-between' }}>
+                        <Text>TOTAL FOCUSES (Recommended: 4-8):</Text><Text> {(this.state.accuracyFocuses.length + this.state.communicationFocuses.length + this.state.constitutionFocuses.length + this.state.dexterityFocuses.length + this.state.fightingFocuses.length + this.state.intelligenceFocuses.length + this.state.perceptionFocuses.length + this.state.strengthFocuses.length + this.state.willpowerFocuses.length)}</Text>
+                      </View>
+                    </TableCell>
+                  </TableRow>
+                </Table>
 
 
 
@@ -457,6 +631,20 @@ class App extends React.Component {
                       <TableCell>
                         <text style={{ fontSize: 10 }}>Can they talk?</text>
                       </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.communicationFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="CommunicationFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateCommunicationFocuses}
+                          />
+                        </label>
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -476,6 +664,20 @@ class App extends React.Component {
                       <TableCell>
                         <text style={{ fontSize: 10 }}>The more constitution the more health, so it should be high for higher threats.</text>
                       </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.constitutionFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="ConstitutionFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateConstitutionFocuses}
+                          />
+                        </label>
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -494,6 +696,20 @@ class App extends React.Component {
                       <TableCell>{this.state.dexterity}</TableCell>
                       <TableCell>
                         <text style={{ fontSize: 10 }}>4 Dexterity is very good, 6 is extraordinary. Anything higher is annoying.</text>
+                      </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.dexterityFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="DexterityFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateDexterityFocuses}
+                          />
+                        </label>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -547,6 +763,20 @@ class App extends React.Component {
                       <TableCell>
                         <text style={{ fontSize: 10 }}>Can they think?</text>
                       </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.intelligenceFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="IntelligenceFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateIntelligenceFocuses}
+                          />
+                        </label>
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -565,6 +795,20 @@ class App extends React.Component {
                       <TableCell>{this.state.perception}</TableCell>
                       <TableCell>
                         <text style={{ fontSize: 10 }}>If they use accuracy weapons this should be high.</text>
+                      </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.perceptionFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="PerceptionFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updatePerceptionFocuses}
+                          />
+                        </label>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -585,6 +829,20 @@ class App extends React.Component {
                       <TableCell>
                         <text style={{ fontSize: 10 }}>If they use fighting weapons this should be high.</text>
                       </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.strengthFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="StrengthFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateStrengthFocuses}
+                          />
+                        </label>
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -604,6 +862,20 @@ class App extends React.Component {
                       <TableCell>
                         <text style={{ fontSize: 10 }}>The higher this is the less likely they are to run from a fight.</text>
                       </TableCell>
+                      <TableCell>
+                        <label>
+                          <Select
+                            options={this.willpowerFocuses}
+                            isMulti
+                            placeholder="Focuses"
+                            name="WillpowerFocuses"
+                            className="focuses-multi-select"
+                            classNamePrefix="focus-select"
+                            isClearable={false}
+                            onChange={this.updateWillpowerFocuses}
+                          />
+                        </label>
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -611,9 +883,9 @@ class App extends React.Component {
               </form>
             </TableCell>
             <TableCell style={{ height: "100%", verticalAlign: "Top" }}>
-              <text>{this.state.name}</text>
-              {this.state.accuracyWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))};
-              {this.state.fightingWeapons.map((weapon) => (<li>{weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))};
+              <text>{this.state.name}</text> 
+              {this.state.accuracyWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.accuracy}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
+              {this.state.fightingWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.fighting}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
             </TableCell>
           </TableRow>
         </Table>
