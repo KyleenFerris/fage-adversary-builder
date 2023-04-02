@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/fage-adversary-builder/static/css/main.073c9b0a.css",
-    "main.js": "/fage-adversary-builder/static/js/main.72890e06.js",
+    "main.js": "/fage-adversary-builder/static/js/main.b888fb81.js",
     "static/js/787.5e7ea47b.chunk.js": "/fage-adversary-builder/static/js/787.5e7ea47b.chunk.js",
     "static/media/logo.svg": "/fage-adversary-builder/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/fage-adversary-builder/index.html",
     "main.073c9b0a.css.map": "/fage-adversary-builder/static/css/main.073c9b0a.css.map",
-    "main.72890e06.js.map": "/fage-adversary-builder/static/js/main.72890e06.js.map",
+    "main.b888fb81.js.map": "/fage-adversary-builder/static/js/main.b888fb81.js.map",
     "787.5e7ea47b.chunk.js.map": "/fage-adversary-builder/static/js/787.5e7ea47b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.72890e06.js"
+    "static/js/main.b888fb81.js"
   ]
 }
