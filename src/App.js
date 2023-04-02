@@ -251,6 +251,7 @@ class App extends React.Component {
     this.setState({ strength: 0 })
     this.setState({ willpower: 0 })
     this.setState({ perception: 0 })
+    this.setState({advancements: 0})
     this.setState({ selectedThreatLevel: event.target.value })
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
 
@@ -259,7 +260,6 @@ class App extends React.Component {
     //determine how many points of advancement we get by using a random number gen between value array min and max
     let rand = this.threatLevels[event.target.value].value[1];
     if (this.state.randomized) rand = Math.round(this.threatLevels[event.target.value].value[0] + Math.random() * (this.threatLevels[event.target.value].value[1] - this.threatLevels[event.target.value].value[0]));
-    this.setState({ advancements: rand });
     this.setState({ totalAdvancements: rand })
   }
 
