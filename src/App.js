@@ -27,7 +27,7 @@ class App extends React.Component {
       selectedThreatLevel: 0,
       randomized: false,
       threatLevelLabel: 'Minor',
-      advancements: 20,
+      advancements: 0,
       totalAdvancements: 20,
       accuracy: 0,
       communication: 0,
@@ -396,83 +396,72 @@ class App extends React.Component {
 
   }
 
-  increment(e, type, adding) {
+  async increment(e, type, adding) {
     e.preventDefault()
 
     if (type === "accuracy") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.accuracy <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.accuracy >= 0) return;
-      this.setState({ accuracy: this.state.accuracy + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.accuracy < 0)
+        await this.setState({accuracy: this.state.accuracy + adding})
+      else return;
+      if (this.state.accuracy >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
+      
     }
     else if (type === "communication") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.communication <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.communication >= 0) return;
-      this.setState({ communication: this.state.communication + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.communication < 0)
+        await this.setState({communication: this.state.communication + adding})
+      else return;
+      if (this.state.communication >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "constitution") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.constitution <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.constitution >= 0) return;
-      this.setState({ constitution: this.state.constitution + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.constitution < 0)
+        await this.setState({constitution: this.state.constitution + adding})
+      else return;
+      if (this.state.constitution >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "dexterity") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.dexterity <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.dexterity >= 0) return;
-      this.setState({ dexterity: this.state.dexterity + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.dexterity < 0)
+        await this.setState({dexterity: this.state.dexterity + adding})
+      else return;
+      if (this.state.dexterity >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "fighting") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.fighting <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.fighting >= 0) return;
-      this.setState({ fighting: this.state.fighting + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.fighting < 0)
+        await this.setState({fighting: this.state.fighting + adding})
+      else return;
+      if (this.state.fighting >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "intelligence") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.intelligence <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.intelligence >= 0) return;
-      this.setState({ intelligence: this.state.intelligence + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.intelligence < 0)
+        await this.setState({intelligence: this.state.intelligence + adding})
+      else return;
+      if (this.state.intelligence >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "perception") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.perception <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.perception >= 0) return;
-      this.updateAccuracyWeaponDamageMod(this.state.perception, this.state.perception + adding, false)
-      this.setState({ perception: this.state.perception + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.perception < 0)
+        await this.setState({perception: this.state.perception + adding})
+      else return;
+      if (this.state.perception >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "strength") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.strength <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.strength >= 0) return;
-      this.updateFightingWeaponDamageMod(this.state.strength, this.state.strength + adding, true)
-      this.setState({ strength: this.state.strength + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.strength < 0)
+        await this.setState({strength: this.state.strength + adding})
+      else return;
+      if (this.state.strength >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
     else if (type === "willpower") {
-      //if we're subtracting to a negative number, DON'T remove an advancement.
-      if (!(adding === -1 && this.state.willpower <= 0)) {
-        this.setState({ advancements: this.state.advancements - adding })
-      }
-      if (this.state.advancements <= 0 && adding === 1 && this.state.willpower >= 0) return;
-      this.updateAccuracyWeaponDamageMod(this.state.willpower, this.state.willpower + adding, true)
-      this.setState({ willpower: this.state.willpower + adding })
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.willpower < 0)
+        await this.setState({willpower: this.state.willpower + adding})
+      else return;
+      if (this.state.willpower >= 0)
+        await this.setState({advancements: this.state.advancements + adding})
     }
   }
 
