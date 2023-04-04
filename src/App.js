@@ -27,6 +27,9 @@ class App extends React.Component {
       selectedThreatLevel: 0,
       randomized: false,
       threatLevelLabel: 'Minor',
+      health: 5,
+      defense: 10,
+      speed: 10,
       advancements: 0,
       totalAdvancements: 20,
       accuracy: 0,
@@ -49,7 +52,8 @@ class App extends React.Component {
       intelligenceFocuses: [],
       perceptionFocuses: [],
       strengthFocuses: [],
-      willpowerFocuses: []
+      willpowerFocuses: [],
+      hasSpikedBucklerMod: 0
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -71,7 +75,13 @@ class App extends React.Component {
 
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
   //values are the number of ability advancements it gets, as a range
-  threatLevels = [{ label: 'Minor', value: [10, 20] }, { label: 'Moderate', value: [12, 30] }, { label: 'Major', value: [15, 35] }, { label: 'Dire', value: [15, 40] }, { label: 'Legendary', value: [20, 40] }]
+  threatLevels = [
+    { label: 'Minor', value: [10, 20] },
+    { label: 'Moderate', value: [12, 30] },
+    { label: 'Major', value: [15, 35] },
+    { label: 'Dire', value: [15, 40] },
+    { label: 'Legendary', value: [20, 40] }
+  ]
 
   //arcane blast needs to be use willpower mod instead of perception
   //spiked buckler needs to give +1 defense
@@ -241,26 +251,40 @@ class App extends React.Component {
   handleNameChange(event) {
     this.setState({ name: event.target.value });
   }
-  handleThreatLevelChange(event) {
+  async handleThreatLevelChange(event) {
     this.setState({ accuracy: 0 })
     this.setState({ communication: 0 })
-    this.setState({ constitution: 0 })
-    this.setState({ dexterity: 0 })
+    await this.setState({ constitution: 0 })
+    await this.setState({ dexterity: 0 })
     this.setState({ intelligence: 0 })
     this.setState({ fighting: 0 })
     this.setState({ strength: 0 })
     this.setState({ willpower: 0 })
     this.setState({ perception: 0 })
-    this.setState({advancements: 0})
-    this.setState({ selectedThreatLevel: event.target.value })
+    this.setState({ advancements: 0 })
+    await this.setState({ selectedThreatLevel: event.target.value })
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
 
-    this.resetWeaponStateDamage();
+    this.resetWeaponStateDamage()
+    this.updateHealth()
+    this.updateDefense()
 
     //determine how many points of advancement we get by using a random number gen between value array min and max
     let rand = this.threatLevels[event.target.value].value[1];
     if (this.state.randomized) rand = Math.round(this.threatLevels[event.target.value].value[0] + Math.random() * (this.threatLevels[event.target.value].value[1] - this.threatLevels[event.target.value].value[0]));
     this.setState({ totalAdvancements: rand })
+  }
+
+  updateHealth() {
+    let health = (this.state.constitution + (parseInt(this.state.selectedThreatLevel) + 1)) * 5;
+    if (health <= 0) health = 5
+    this.setState({ health: health });
+  }
+
+  updateDefense() {
+    let val = this.state.dexterity + 10
+    this.setState({ defense: val })
+    this.setState({ speed: val })
   }
 
   resetWeaponStateDamage() {
@@ -280,14 +304,19 @@ class App extends React.Component {
   }
 
   async updateAccuracyWeapons(event) {
+    let buckler = 0;
     let temp = await event.map((weapon) => {
       if (weapon.weaponGroup === "Arcane Blast") {
         return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.willpower, mod: weapon.mod })
+      }
+      if (weapon.value === "Spiked Buckler") {
+        buckler = 1;
       }
       return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.perception, mod: weapon.mod })
     }
     )
     this.setState({ accuracyWeapons: temp })
+    this.setState({ hasSpikedBucklerMod: buckler })
   }
 
   async updateFightingWeapons(event) {
@@ -361,7 +390,7 @@ class App extends React.Component {
 
   setWeaponFocusBonuses() {
 
-    
+
     let accuracy = this.state.accuracyWeapons
     accuracy = accuracy.map((weapon) => {
       return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod })
@@ -387,7 +416,7 @@ class App extends React.Component {
           return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod })
         }
         else
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
       })
     })
 
@@ -401,67 +430,71 @@ class App extends React.Component {
 
     if (type === "accuracy") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.accuracy < 0)
-        await this.setState({accuracy: this.state.accuracy + adding})
+        await this.setState({ accuracy: this.state.accuracy + adding })
       else return;
       if (this.state.accuracy >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
-      
+        await this.setState({ advancements: this.state.advancements + adding })
+
     }
     else if (type === "communication") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.communication < 0)
-        await this.setState({communication: this.state.communication + adding})
+        await this.setState({ communication: this.state.communication + adding })
       else return;
       if (this.state.communication >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "constitution") {
-      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.constitution < 0)
-        await this.setState({constitution: this.state.constitution + adding})
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.constitution < 0) {
+        await this.setState({ constitution: this.state.constitution + adding })
+        this.updateHealth()
+      }
       else return;
       if (this.state.constitution >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "dexterity") {
-      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.dexterity < 0)
-        await this.setState({dexterity: this.state.dexterity + adding})
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.dexterity < 0) {
+        await this.setState({ dexterity: this.state.dexterity + adding })
+        await this.updateDefense()
+      }
       else return;
       if (this.state.dexterity >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "fighting") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.fighting < 0)
-        await this.setState({fighting: this.state.fighting + adding})
+        await this.setState({ fighting: this.state.fighting + adding })
       else return;
       if (this.state.fighting >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "intelligence") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.intelligence < 0)
-        await this.setState({intelligence: this.state.intelligence + adding})
+        await this.setState({ intelligence: this.state.intelligence + adding })
       else return;
       if (this.state.intelligence >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "perception") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.perception < 0)
-        await this.setState({perception: this.state.perception + adding})
+        await this.setState({ perception: this.state.perception + adding })
       else return;
       if (this.state.perception >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "strength") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.strength < 0)
-        await this.setState({strength: this.state.strength + adding})
+        await this.setState({ strength: this.state.strength + adding })
       else return;
       if (this.state.strength >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "willpower") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.willpower < 0)
-        await this.setState({willpower: this.state.willpower + adding})
+        await this.setState({ willpower: this.state.willpower + adding })
       else return;
       if (this.state.willpower >= 0)
-        await this.setState({advancements: this.state.advancements + adding})
+        await this.setState({ advancements: this.state.advancements + adding })
     }
   }
 
@@ -480,7 +513,7 @@ class App extends React.Component {
                   <select value={this.state.selectedThreatLevel} onChange={this.handleThreatLevelChange}>
 
                     {this.threatLevels.map((option, index) => (
-
+                      
                       <option value={index}>{option.label}</option>
 
                     ))}
@@ -570,7 +603,7 @@ class App extends React.Component {
                 <Table>
                   <TableBody>
                     <TableRow>
-                      <TableCell style={{ width: '10%' }}>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "accuracy", -1) }}>
                           -
                         </button>
@@ -578,7 +611,7 @@ class App extends React.Component {
                       <TableCell style={{ width: '10%' }}>
                         <center>Accuracy</center>
                       </TableCell>
-                      <TableCell style={{ width: '10%' }}>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "accuracy", 1) }}>
                           +
                         </button>
@@ -603,7 +636,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "communication", -1) }}>
                           -
                         </button>
@@ -611,7 +644,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Communication</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "communication", 1) }}>
                           +
                         </button>
@@ -636,7 +669,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "constitution", -1) }}>
                           -
                         </button>
@@ -644,7 +677,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Constitution</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "constitution", 1) }}>
                           +
                         </button>
@@ -669,7 +702,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "dexterity", -1) }}>
                           -
                         </button>
@@ -677,7 +710,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Dexterity</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "dexterity", 1) }}>
                           +
                         </button>
@@ -702,7 +735,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "fighting", -1) }}>
                           -
                         </button>
@@ -710,7 +743,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Fighting</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "fighting", 1) }}>
                           +
                         </button>
@@ -735,7 +768,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "intelligence", -1) }}>
                           -
                         </button>
@@ -743,7 +776,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Intelligence</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "intelligence", 1) }}>
                           +
                         </button>
@@ -768,7 +801,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "perception", -1) }}>
                           -
                         </button>
@@ -776,7 +809,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Perception</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "perception", 1) }}>
                           +
                         </button>
@@ -801,7 +834,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "strength", -1) }}>
                           -
                         </button>
@@ -809,7 +842,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Strength</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "strength", 1) }}>
                           +
                         </button>
@@ -834,7 +867,7 @@ class App extends React.Component {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "willpower", -1) }}>
                           -
                         </button>
@@ -842,7 +875,7 @@ class App extends React.Component {
                       <TableCell>
                         <center>Willpower</center>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: '10%', textAlign: "center" }}>
                         <button onClick={(e) => { this.increment(e, "willpower", 1) }}>
                           +
                         </button>
@@ -872,7 +905,7 @@ class App extends React.Component {
               </form>
             </TableCell>
             <TableCell style={{ height: "100%", verticalAlign: "Top" }}>
-              <text>{this.state.name}</text> 
+              <text>{this.state.defense + this.state.hasSpikedBucklerMod}</text>
               {this.state.accuracyWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.accuracy}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
               {this.state.fightingWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.fighting}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
             </TableCell>
