@@ -16,6 +16,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  whiteTitleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
+  },
 });
 
 class App extends React.Component {
@@ -53,7 +58,12 @@ class App extends React.Component {
       perceptionFocuses: [],
       strengthFocuses: [],
       willpowerFocuses: [],
-      hasSpikedBucklerMod: 0
+      hasSpikedBucklerMod: 0,
+      armor: 2,
+      selectedArmor: "min",
+      canFly: false,
+      canSwim: false,
+      canBurrow: false
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -69,6 +79,8 @@ class App extends React.Component {
     this.updatePerceptionFocuses = this.updatePerceptionFocuses.bind(this);
     this.updateStrengthFocuses = this.updateStrengthFocuses.bind(this);
     this.updateWillpowerFocuses = this.updateWillpowerFocuses.bind(this);
+    this.handleArmorChange = this.handleArmorChange.bind(this);
+    this.handleMoveTypeChange = this.handleMoveTypeChange.bind(this);
   }
 
 
@@ -76,11 +88,11 @@ class App extends React.Component {
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
   //values are the number of ability advancements it gets, as a range
   threatLevels = [
-    { label: 'Minor', value: [10, 20] },
-    { label: 'Moderate', value: [12, 30] },
-    { label: 'Major', value: [15, 35] },
-    { label: 'Dire', value: [15, 40] },
-    { label: 'Legendary', value: [20, 40] }
+    { label: 'Minor', value: [10, 20], armor: [2, 3] },
+    { label: 'Moderate', value: [12, 30], armor: [3, 5] },
+    { label: 'Major', value: [15, 35], armor: [4, 6] },
+    { label: 'Dire', value: [15, 40], armor: [6, 9] },
+    { label: 'Legendary', value: [20, 40], armor: [7, 10] }
   ]
 
   //arcane blast needs to be use willpower mod instead of perception
@@ -251,22 +263,23 @@ class App extends React.Component {
   handleNameChange(event) {
     this.setState({ name: event.target.value });
   }
-  async handleThreatLevelChange(event) {
+  handleThreatLevelChange(event) {
     this.setState({ accuracy: 0 })
     this.setState({ communication: 0 })
-    await this.setState({ constitution: 0 })
-    await this.setState({ dexterity: 0 })
+    this.setState({ constitution: 0 })
+    this.setState({ dexterity: 0 })
     this.setState({ intelligence: 0 })
     this.setState({ fighting: 0 })
     this.setState({ strength: 0 })
     this.setState({ willpower: 0 })
     this.setState({ perception: 0 })
     this.setState({ advancements: 0 })
-    await this.setState({ selectedThreatLevel: event.target.value })
+    this.setState({ selectedThreatLevel: event.target.value })
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
 
     this.resetWeaponStateDamage()
-    this.updateHealth()
+    this.updateHealth(event.target.value)
+    this.updateArmor(this.threatLevels[event.target.value].armor)
     this.updateDefense()
 
     //determine how many points of advancement we get by using a random number gen between value array min and max
@@ -275,8 +288,8 @@ class App extends React.Component {
     this.setState({ totalAdvancements: rand })
   }
 
-  updateHealth() {
-    let health = (this.state.constitution + (parseInt(this.state.selectedThreatLevel) + 1)) * 5;
+  updateHealth(level) {
+    let health = (this.state.constitution + (parseInt(level) + 1)) * 5;
     if (health <= 0) health = 5
     this.setState({ health: health });
   }
@@ -285,6 +298,34 @@ class App extends React.Component {
     let val = this.state.dexterity + 10
     this.setState({ defense: val })
     this.setState({ speed: val })
+  }
+
+  async handleArmorChange(event) {
+    await this.setState({ selectedArmor: event.target.value })
+    this.updateArmor(this.threatLevels[this.state.selectedThreatLevel].armor)
+  }
+
+  async handleMoveTypeChange(event) {
+    console.log(event);
+    if (event.target.value === "fly") {
+      await this.setState({ canFly: !this.state.canFly })
+    }
+    if (event.target.value === "swim") {
+      await this.setState({ canSwim: !this.state.canSwim })
+    }
+    if (event.target.value === "burrow") {
+      await this.setState({ canBurrow: !this.state.canBurrow })
+    }
+
+    console.log(this.state.canBurrow)
+  }
+
+  updateArmor(range) {
+    let armor = 0
+    if (this.state.selectedArmor === "min") armor = range[0]
+    else if (this.state.selectedArmor === "max") armor = range[1]
+    else armor = Math.round(range[0] + Math.random() * (range[1] - range[0]));
+    this.setState({ armor: armor })
   }
 
   resetWeaponStateDamage() {
@@ -360,6 +401,7 @@ class App extends React.Component {
       else
         accuracy.push(focus)
     });
+
     await this.setState({ accuracyFocuses: accuracy })
     await this.setState({ fightingFocuses: fighting })
     await this.setState({ weaponFocuses: event })
@@ -446,7 +488,7 @@ class App extends React.Component {
     else if (type === "constitution") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.constitution < 0) {
         await this.setState({ constitution: this.state.constitution + adding })
-        this.updateHealth()
+        this.updateHealth(this.state.selectedThreatLevel)
       }
       else return;
       if (this.state.constitution >= 0)
@@ -502,414 +544,640 @@ class App extends React.Component {
     return (
       <div>
         <Table>
-          <TableRow>
-            <TableCell style={{ width: '40%' }}>
-              <form onSubmit={this.handleSubmit}>        <label>
-                <Text style={styles.titleText}>Name: </Text>
-                <input type="text" value={this.state.name} onChange={this.handleNameChange} /></label>
-                <br></br>
-                <label>
-                  Threat Level:
-                  <select value={this.state.selectedThreatLevel} onChange={this.handleThreatLevelChange}>
+          <TableBody>
+            <TableRow>
+              <TableCell style={{ width: '40%' }}>
+                <form>        <label>
+                  <Text style={styles.titleText}>Name: </Text>
+                  <input type="text" value={this.state.name} onChange={this.handleNameChange} /></label>
+                  <br></br>
+                  <label>
+                    <b>Threat Level: </b>
+                    <select value={this.state.selectedThreatLevel} onChange={this.handleThreatLevelChange}>
 
-                    {this.threatLevels.map((option, index) => (
-                      
-                      <option value={index}>{option.label}</option>
+                      {this.threatLevels.map((option, index) => (
 
-                    ))}
+                        <option value={index}>{option.label}</option>
 
-                  </select>
-                </label>
-                <label>
-                  {"\n"}Randomize advancement amount?:
-                  <input type="checkbox" checked={this.state.randomized} onChange={this.handleRandomizeChange} />
-                </label>
-                <br></br><br></br>
-                <label>
-                  <text>Weapons</text>
+                      ))}
+
+                    </select>
+                  </label>
+                  <label>
+                    {"\n"}Randomize advancement amount?:
+                    <input type="checkbox" checked={this.state.randomized} onChange={this.handleRandomizeChange} />
+                  </label>
+                  <br></br>
+                  <label>
+                    <b>Armor Rating: </b>
+
+                    <input type="radio" name="ar" value="min" id="min" checked={this.state.selectedArmor === "min"} onChange={this.handleArmorChange} />
+                    <label htmlFor="min">Minimum</label>
+
+                    <input type="radio" name="ar" value="max" id="max" checked={this.state.selectedArmor === "max"} onChange={this.handleArmorChange} />
+                    <label htmlFor="max">Maximum</label>
+
+                    <input type="radio" name="ar" value="rand" id="rand" checked={this.state.selectedArmor === "rand"} onChange={this.handleArmorChange} />
+                    <label htmlFor="rand">Random</label>
+                  </label>
+                  <label>
+                    <br></br>
+                    <label>
+                      <b>Additional Movement Types: </b>
+
+                      <input type="radio" name="movementTypes" value="fly" id="fly" checked={this.state.canFly} onClick={this.handleMoveTypeChange} />
+                      <label htmlFor="fly">Flying</label>
+
+                      <input type="radio" name="movementTypes" value="swim" id="swim" checked={this.state.canSwim} onClick={this.handleMoveTypeChange} />
+                      <label htmlFor="swim">Swimming</label>
+
+                      <input type="radio" name="movementTypes" value="burrow" id="burrow" checked={this.state.canBurrow} onClick={this.handleMoveTypeChange} />
+                      <label htmlFor="burrow">Burrowing</label>
+                    </label>
+                    <br></br><br></br>
+                    <label></label>
+                    <text>Weapons</text>
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell style={{ width: '50%' }}>
+                            <label>
+                              <Select
+                                defaultValue={[]}
+                                isMulti
+                                placeholder="Accuracy"
+                                closeMenuOnSelect={false}
+                                name="Accuracy Weapons"
+                                options={this.accuracyWeapons}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                onChange={this.updateAccuracyWeapons}
+                              />
+                            </label>
+                          </TableCell>
+                          <TableCell style={{ width: '50%' }}>
+                            <label>
+                              <Select
+                                defaultValue={[]}
+                                isMulti
+                                placeholder="Fighting"
+                                closeMenuOnSelect={false}
+                                name="Fighting Weapons"
+                                options={this.fightingWeapons}
+                                className="fighting-multi-select"
+                                classNamePrefix="fighting-select"
+                                onChange={this.updateFightingWeapons}
+                              />
+                            </label>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                    <label>
+                      Weapon Focuses
+                      <br></br>
+                      <Select
+                        defaultValue={[]}
+                        isMulti
+                        placeholder="Focuses"
+                        name="Focuses"
+                        options={this.weaponFocuses}
+                        className="focuses-multi-select"
+                        classNamePrefix="focus-select"
+                        onChange={this.updateWeaponFocuses}
+                      />
+                    </label>
+                  </label>
+                  <br></br>
+
+                  <text>
+                    This adversary can have between {this.threatLevels[this.state.selectedThreatLevel].value[0]} and {this.threatLevels[this.state.selectedThreatLevel].value[1]} stat advancements.
+                  </text>
+                  <br></br>
                   <Table>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>
+                          <View style={{ justifyContent: 'space-between' }}>
+                            <Text>TOTAL ADVANCEMENTS:</Text><Text> {Math.max(0, this.state.accuracy) + Math.max(0, this.state.communication) + Math.max(0, this.state.constitution) + Math.max(0, this.state.dexterity) + Math.max(0, this.state.fighting) + Math.max(0, this.state.intelligence) + Math.max(0, this.state.perception) + Math.max(0, this.state.strength) + Math.max(0, this.state.willpower)} / {this.state.totalAdvancements}</Text>
+                          </View>
+                        </TableCell>
+                        <TableCell>
+                          <View style={{ justifyContent: 'space-between' }}>
+                            <Text>TOTAL FOCUSES (Recommended: 4-8):</Text><Text> {(this.state.accuracyFocuses.length + this.state.communicationFocuses.length + this.state.constitutionFocuses.length + this.state.dexterityFocuses.length + this.state.fightingFocuses.length + this.state.intelligenceFocuses.length + this.state.perceptionFocuses.length + this.state.strengthFocuses.length + this.state.willpowerFocuses.length)}</Text>
+                          </View>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+
+                  <br></br>
+                  <Table>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "accuracy", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell style={{ width: '10%' }}>
+                          <center>Accuracy</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "accuracy", 1) }}>
+                            +
+                          </button>
+                        </TableCell >
+                        <TableCell style={{ width: '10%' }}>{this.state.accuracy}</TableCell>
+                        <TableCell style={{ width: '30%' }}>
+                          <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                        </TableCell>
+                        <TableCell style={{ width: '30%' }}>
+                          <label>
+                            <Select
+                              value={this.state.accuracyFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="AccuracyFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isDisabled={true}
+                              isClearable={false}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "communication", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Communication</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "communication", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.communication}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>Can they talk?</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.communicationFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="CommunicationFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateCommunicationFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "constitution", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Constitution</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "constitution", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.constitution}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>The more constitution the more health, so it should be high for higher threats.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.constitutionFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="ConstitutionFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateConstitutionFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "dexterity", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Dexterity</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "dexterity", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.dexterity}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>4 Dexterity is very good, 6 is extraordinary. Anything higher is annoying.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.dexterityFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="DexterityFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateDexterityFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "fighting", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Fighting</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "fighting", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.fighting}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              value={this.state.fightingFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="FightingFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isDisabled={true}
+                              isClearable={false}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "intelligence", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Intelligence</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "intelligence", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.intelligence}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>Can they think?</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.intelligenceFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="IntelligenceFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateIntelligenceFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "perception", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Perception</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "perception", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.perception}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>If they use accuracy weapons this should be high.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.perceptionFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="PerceptionFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updatePerceptionFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "strength", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Strength</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "strength", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.strength}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>If they use fighting weapons this should be high.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.strengthFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="StrengthFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateStrengthFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "willpower", -1) }}>
+                            -
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          <center>Willpower</center>
+                        </TableCell>
+                        <TableCell style={{ width: '10%', textAlign: "center" }}>
+                          <button onClick={(e) => { this.increment(e, "willpower", 1) }}>
+                            +
+                          </button>
+                        </TableCell>
+                        <TableCell>{this.state.willpower}</TableCell>
+                        <TableCell>
+                          <text style={{ fontSize: 10 }}>The higher this is the less likely they are to run from a fight.</text>
+                        </TableCell>
+                        <TableCell>
+                          <label>
+                            <Select
+                              options={this.willpowerFocuses}
+                              isMulti
+                              placeholder="Focuses"
+                              name="WillpowerFocuses"
+                              className="focuses-multi-select"
+                              classNamePrefix="focus-select"
+                              isClearable={false}
+                              onChange={this.updateWillpowerFocuses}
+                            />
+                          </label>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+
+                </form>
+              </TableCell>
+              <TableCell style={{ height: "100%", verticalAlign: "Top", maxWidth: "70%" }}>
+                <Table>
+                  <TableHead>
                     <TableRow>
-                      <TableCell style={{ width: '50%' }}>
-                        <label>
-                          <Select
-                            defaultValue={[]}
-                            isMulti
-                            placeholder="Accuracy"
-                            closeMenuOnSelect={false}
-                            name="Accuracy Weapons"
-                            options={this.accuracyWeapons}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            onChange={this.updateAccuracyWeapons}
-                          />
-                        </label>
-                      </TableCell>
-                      <TableCell style={{ width: '50%' }}>
-                        <label>
-                          <Select
-                            defaultValue={[]}
-                            isMulti
-                            placeholder="Fighting"
-                            closeMenuOnSelect={false}
-                            name="Fighting Weapons"
-                            options={this.fightingWeapons}
-                            className="fighting-multi-select"
-                            classNamePrefix="fighting-select"
-                            onChange={this.updateFightingWeapons}
-                          />
-                        </label>
+                      <TableCell style={{ backgroundColor: "#03a879", height: 30, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingLeft: 40, paddingRight: 40 }}>
+                        <Text style={styles.whiteTitleText}>
+                          {this.state.name}
+                        </Text>
                       </TableCell>
                     </TableRow>
-                  </Table>
-                  <label>
-                    Weapon Focuses
-                    <br></br>
-                    <Select
-                      defaultValue={[]}
-                      isMulti
-                      placeholder="Focuses"
-                      name="Focuses"
-                      options={this.weaponFocuses}
-                      className="focuses-multi-select"
-                      classNamePrefix="focus-select"
-                      onChange={this.updateWeaponFocuses}
-                    />
-                  </label>
-                </label>
-                <br></br>
-
-                <text>
-                  This adversary can have between {this.threatLevels[this.state.selectedThreatLevel].value[0]} and {this.threatLevels[this.state.selectedThreatLevel].value[1]} stat advancements.
-                </text>
-                <br></br>
-                <Table>
-                  <TableRow>
-                    <TableCell>
-                      <View style={{ justifyContent: 'space-between' }}>
-                        <Text>TOTAL ADVANCEMENTS:</Text><Text> {Math.max(0, this.state.accuracy) + Math.max(0, this.state.communication) + Math.max(0, this.state.constitution) + Math.max(0, this.state.dexterity) + Math.max(0, this.state.fighting) + Math.max(0, this.state.intelligence) + Math.max(0, this.state.perception) + Math.max(0, this.state.strength) + Math.max(0, this.state.willpower)} / {this.state.totalAdvancements}</Text>
-                      </View>
-                    </TableCell>
-                    <TableCell>
-                      <View style={{ justifyContent: 'space-between' }}>
-                        <Text>TOTAL FOCUSES (Recommended: 4-8):</Text><Text> {(this.state.accuracyFocuses.length + this.state.communicationFocuses.length + this.state.constitutionFocuses.length + this.state.dexterityFocuses.length + this.state.fightingFocuses.length + this.state.intelligenceFocuses.length + this.state.perceptionFocuses.length + this.state.strengthFocuses.length + this.state.willpowerFocuses.length)}</Text>
-                      </View>
-                    </TableCell>
-                  </TableRow>
-                </Table>
-
-
-
-                <br></br>
-                <Table>
+                  </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "accuracy", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell style={{ width: '10%' }}>
-                        <center>Accuracy</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "accuracy", 1) }}>
-                          +
-                        </button>
-                      </TableCell >
-                      <TableCell style={{ width: '10%' }}>{this.state.accuracy}</TableCell>
-                      <TableCell style={{ width: '30%' }}>
-                        <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
-                      </TableCell>
-                      <TableCell style={{ width: '30%' }}>
-                        <label>
-                          <Select
-                            value={this.state.accuracyFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="AccuracyFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isDisabled={true}
-                            isClearable={false}
-                          />
-                        </label>
+                      <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
+                        <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                          Abilities (Focuses)
+                        </Text>
                       </TableCell>
                     </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "communication", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Communication</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "communication", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.communication}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>Can they talk?</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.communicationFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="CommunicationFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateCommunicationFocuses}
-                          />
-                        </label>
-                      </TableCell>
+                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.accuracy}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Accuracy</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.accuracyFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.communication}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Communication</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.communicationFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.constitution}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Constitution</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.constitutionFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.dexterity}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Dexterity</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.dexterityFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.fighting}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Fighting</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.fightingFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.intelligence}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Intelligence</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.intelligenceFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.perception}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Perception</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.perceptionFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.strength}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Strength</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.strengthFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{width:"10%"}}>
+                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.willpower}</Text>
+                            </TableCell>
+                            <TableCell style={{width:"40%", textAlign:'center'}}>
+                              <Text style={{fontSize:20}}>Willpower</Text>
+                            </TableCell>
+                            <TableCell>
+                              <Text>
+                              {this.state.willpowerFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
                     </TableRow>
                     <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "constitution", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Constitution</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "constitution", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.constitution}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>The more constitution the more health, so it should be high for higher threats.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.constitutionFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="ConstitutionFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateConstitutionFocuses}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "dexterity", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Dexterity</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "dexterity", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.dexterity}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>4 Dexterity is very good, 6 is extraordinary. Anything higher is annoying.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.dexterityFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="DexterityFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateDexterityFocuses}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "fighting", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Fighting</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "fighting", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.fighting}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>Should be between +3 and +6 if the adversary attacks with this stat.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            value={this.state.fightingFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="FightingFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isDisabled={true}
-                            isClearable={false}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "intelligence", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Intelligence</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "intelligence", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.intelligence}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>Can they think?</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.intelligenceFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="IntelligenceFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateIntelligenceFocuses}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "perception", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Perception</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "perception", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.perception}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>If they use accuracy weapons this should be high.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.perceptionFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="PerceptionFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updatePerceptionFocuses}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "strength", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Strength</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "strength", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.strength}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>If they use fighting weapons this should be high.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.strengthFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="StrengthFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateStrengthFocuses}
-                          />
-                        </label>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "willpower", -1) }}>
-                          -
-                        </button>
-                      </TableCell>
-                      <TableCell>
-                        <center>Willpower</center>
-                      </TableCell>
-                      <TableCell style={{ width: '10%', textAlign: "center" }}>
-                        <button onClick={(e) => { this.increment(e, "willpower", 1) }}>
-                          +
-                        </button>
-                      </TableCell>
-                      <TableCell>{this.state.willpower}</TableCell>
-                      <TableCell>
-                        <text style={{ fontSize: 10 }}>The higher this is the less likely they are to run from a fight.</text>
-                      </TableCell>
-                      <TableCell>
-                        <label>
-                          <Select
-                            options={this.willpowerFocuses}
-                            isMulti
-                            placeholder="Focuses"
-                            name="WillpowerFocuses"
-                            className="focuses-multi-select"
-                            classNamePrefix="focus-select"
-                            isClearable={false}
-                            onChange={this.updateWillpowerFocuses}
-                          />
-                        </label>
+                      <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
+                        <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                          
+                        </Text>
                       </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
-
-              </form>
-            </TableCell>
-            <TableCell style={{ height: "100%", verticalAlign: "Top" }}>
-              <text>{this.state.defense + this.state.hasSpikedBucklerMod}</text>
-              {this.state.accuracyWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.accuracy}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
-              {this.state.fightingWeapons.map((weapon) => (<li>Hit: {weapon.focusMod + this.state.fighting}    Damage: {weapon.value} ({weapon.weaponGroup}), {weapon.damage} + {weapon.mod + weapon.statMod}</li>))}
-            </TableCell>
-          </TableRow>
+              </TableCell>
+            </TableRow>
+          </TableBody>
         </Table>
         <br></br>
       </div>
