@@ -1131,7 +1131,7 @@ class App extends React.Component {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell style={{ backgroundColor: "#03a879", height: 30, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingLeft: 40, paddingRight: 40 }}>
+                        <TableCell style={{ backgroundColor: "#03a879", height: 30, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingLeft: 40, paddingRight: 40, textAlign: "center" }}>
                           <Text style={styles.whiteTitleText}>
                             {this.state.name}
                           </Text>
