@@ -9,6 +9,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Select from 'react-select';
+import { EditTextarea } from 'react-edit-text';
+import { TableFooter } from '@mui/material';
 
 const styles = StyleSheet.create({
 
@@ -63,7 +65,12 @@ class App extends React.Component {
       selectedArmor: "min",
       canFly: false,
       canSwim: false,
-      canBurrow: false
+      canBurrow: false,
+      isElite: false,
+      isHeroic: false,
+      isEpic: false,
+      giantWeapons: false,
+      berserker: false
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -81,6 +88,8 @@ class App extends React.Component {
     this.updateWillpowerFocuses = this.updateWillpowerFocuses.bind(this);
     this.handleArmorChange = this.handleArmorChange.bind(this);
     this.handleMoveTypeChange = this.handleMoveTypeChange.bind(this);
+    this.handleBuffChange = this.handleBuffChange.bind(this);
+    this.handleDamageChange = this.handleDamageChange.bind(this);
   }
 
 
@@ -98,60 +107,60 @@ class App extends React.Component {
   //arcane blast needs to be use willpower mod instead of perception
   //spiked buckler needs to give +1 defense
   accuracyWeapons = [
-    { label: 'Arcane Blast (Arcane Blast)', value: 'Arcane Blast', weaponGroup: "Arcane Blast", damage: "1d6", range: "24 Yards", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Arquebus (Black Powder)', value: 'Arquebus', weaponGroup: "Black Powder", damage: "2d6", range: "12-24 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Blunderbuss (Black Powder)', value: 'Blunderbuss', weaponGroup: "Black Powder", damage: "1d6", range: "6 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 2 },
-    { label: 'Musket (Black Powder)', value: 'Musket', weaponGroup: "Black Powder", damage: "3d6", range: "24-48 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Pistol (Black Powder)', value: 'Pistol', weaponGroup: "Black Powder", damage: "1d6", range: "8-16 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Crossbow (Bows)', value: 'Crossbow', weaponGroup: "Bows", damage: "2d6", range: "30-60 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: "1d6", range: "16-32 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: "1d6", range: "26-52 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: "1d3", range: "Melee", reloadTime: 1, focusMod: 0, statMod: 0, mod: "" },
-    { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: "1d6-1", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1 },
-    { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1 },
-    { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: "1d6+1", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: "1d6", range: "Melee", reloadTime: 2, focusMod: 0, statMod: 0, mod: "" },
-    { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: "1d6", range: "6-12 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: "1d6", range: "14-28 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: "1d6", range: "12-24 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Slingshot (Slings)', value: 'Slingshot', weaponGroup: "Slings", damage: "1d3", range: "10-20 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Club (Staves)', value: 'Club', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Morningstar (Staves)', value: 'Morningstar', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Quarterstaff (Staves)', value: 'Quarterstaff', weaponGroup: "Staves", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 }
+    { label: 'Arcane Blast (Arcane Blast)', value: 'Arcane Blast', weaponGroup: "Arcane Blast", damage: 1, range: "24 Yards", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Arquebus (Black Powder)', value: 'Arquebus', weaponGroup: "Black Powder", damage: 2, range: "12-24 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Blunderbuss (Black Powder)', value: 'Blunderbuss', weaponGroup: "Black Powder", damage: 1, range: "6 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 2, useD3: false, finalDamageCalc: '' },
+    { label: 'Musket (Black Powder)', value: 'Musket', weaponGroup: "Black Powder", damage: 3, range: "24-48 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Pistol (Black Powder)', value: 'Pistol', weaponGroup: "Black Powder", damage: 1, range: "8-16 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Crossbow (Bows)', value: 'Crossbow', weaponGroup: "Bows", damage: 2, range: "30-60 Yards", reloadTime: "Major Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: 1, range: "16-32 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: 1, range: "26-52 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: true, finalDamageCalc: '' },
+    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: 1, focusMod: 0, statMod: 0, mod: "", useD3: true, finalDamageCalc: '' },
+    { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1, useD3: false, finalDamageCalc: '' },
+    { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1, useD3: false, finalDamageCalc: '' },
+    { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: 1, range: "Melee", reloadTime: 2, focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: 1, range: "6-12 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: 1, range: "14-28 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: 1, range: "12-24 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Slingshot (Slings)', value: 'Slingshot', weaponGroup: "Slings", damage: 1, range: "10-20 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1, useD3: true, finalDamageCalc: '' },
+    { label: 'Club (Staves)', value: 'Club', weaponGroup: "Staves", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Morningstar (Staves)', value: 'Morningstar', weaponGroup: "Staves", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Quarterstaff (Staves)', value: 'Quarterstaff', weaponGroup: "Staves", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' }
   ]
 
   fightingWeapons = [
-    { label: 'Battleaxe (Axes)', value: 'Battleaxe', weaponGroup: "Axes", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Throwing Axe (Axes)', value: 'Throwing Axe', weaponGroup: "Axes", damage: "1d6", range: "4-8 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 2 },
-    { label: 'Two-handed Axe (Axes)', value: 'Two-handed Axe', weaponGroup: "Axes", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Mace (Bludgeons)', value: 'Mace', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Maul (Bludgeons)', value: 'Maul', weaponGroup: "Bludgeons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2 },
-    { label: 'Two-handed Maul (Bludgeons)', value: 'Two-handed Maul', weaponGroup: "Bludgeons", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2 },
-    { label: 'Bastard Sword (Heavy Blades)', value: 'Bastard Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Long Sword (Heavy Blades)', value: 'Long Sword', weaponGroup: "Heavy Blades", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Two-handed Sword (Heavy Blades)', value: 'Two-handed Sword', weaponGroup: "Heavy Blades", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Heavy Lance (Lances)', value: 'Heavy Lance', weaponGroup: "Lances", damage: "3d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Jousting Lance (Lances)', value: 'Jousting Lance', weaponGroup: "Lances", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Light Lance (Lances)', value: 'Light Lance', weaponGroup: "Lances", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Glaive (Polearms)', value: 'Glaive', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Halberd (Polearms)', value: 'Halberd', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 4 },
-    { label: 'Military Fork (Polearms)', value: 'Military Fork', weaponGroup: "Polearms", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Spear (Spears)', value: 'Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0 },
-    { label: 'Throwing Spear (Spears)', value: 'Throwing Spear', weaponGroup: "Spears", damage: "1d6", range: "8-16 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Two-handed Spear (Spears)', value: 'Two-handed Spear', weaponGroup: "Spears", damage: "2d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3 },
-    { label: 'Bite (Natural Weapons)', value: 'Bite', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Claw (Natural Weapons)', value: 'Claw', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Tentacle (Natural Weapons)', value: 'Tentacle', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Gore (Natural Weapons)', value: 'Gore', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Kick (Natural Weapons)', value: 'Kick', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Tail Bash (Natural Weapons)', value: 'Tail Bash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Slam (Natural Weapons)', value: 'Slam', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 },
-    { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: "1d6", range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1 }
+    { label: 'Battleaxe (Axes)', value: 'Battleaxe', weaponGroup: "Axes", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Throwing Axe (Axes)', value: 'Throwing Axe', weaponGroup: "Axes", damage: 1, range: "4-8 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 2, useD3: false, finalDamageCalc: '' },
+    { label: 'Two-handed Axe (Axes)', value: 'Two-handed Axe', weaponGroup: "Axes", damage: 3, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Mace (Bludgeons)', value: 'Mace', weaponGroup: "Bludgeons", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Maul (Bludgeons)', value: 'Maul', weaponGroup: "Bludgeons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2, useD3: false, finalDamageCalc: '' },
+    { label: 'Two-handed Maul (Bludgeons)', value: 'Two-handed Maul', weaponGroup: "Bludgeons", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 2, useD3: false, finalDamageCalc: '' },
+    { label: 'Bastard Sword (Heavy Blades)', value: 'Bastard Sword', weaponGroup: "Heavy Blades", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Long Sword (Heavy Blades)', value: 'Long Sword', weaponGroup: "Heavy Blades", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Two-handed Sword (Heavy Blades)', value: 'Two-handed Sword', weaponGroup: "Heavy Blades", damage: 3, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Heavy Lance (Lances)', value: 'Heavy Lance', weaponGroup: "Lances", damage: 3, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Jousting Lance (Lances)', value: 'Jousting Lance', weaponGroup: "Lances", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Light Lance (Lances)', value: 'Light Lance', weaponGroup: "Lances", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Glaive (Polearms)', value: 'Glaive', weaponGroup: "Polearms", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Halberd (Polearms)', value: 'Halberd', weaponGroup: "Polearms", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 4, useD3: false, finalDamageCalc: '' },
+    { label: 'Military Fork (Polearms)', value: 'Military Fork', weaponGroup: "Polearms", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Spear (Spears)', value: 'Spear', weaponGroup: "Spears", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Throwing Spear (Spears)', value: 'Throwing Spear', weaponGroup: "Spears", damage: 1, range: "8-16 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Two-handed Spear (Spears)', value: 'Two-handed Spear', weaponGroup: "Spears", damage: 2, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
+    { label: 'Bite (Natural Weapons)', value: 'Bite', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Claw (Natural Weapons)', value: 'Claw', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Tentacle (Natural Weapons)', value: 'Tentacle', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Gore (Natural Weapons)', value: 'Gore', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Kick (Natural Weapons)', value: 'Kick', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Tail Bash (Natural Weapons)', value: 'Tail Bash', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Slam (Natural Weapons)', value: 'Slam', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Lash (Natural Weapons)', value: 'Lash', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Talons (Natural Weapons)', value: 'Talons', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
+    { label: 'Sting (Natural Weapons)', value: 'Sting', weaponGroup: "Natural Weapons", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' }
   ]
 
 
@@ -278,18 +287,31 @@ class App extends React.Component {
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
 
     this.resetWeaponStateDamage()
-    this.updateHealth(event.target.value)
+
+    let bonusHealth = 0
+    if (this.state.isElite) bonusHealth += 5
+    if (this.state.isHeroic) bonusHealth += 15
+    if (this.state.isEpic) bonusHealth += 20
+
+    this.updateHealth(event.target.value, bonusHealth)
     this.updateArmor(this.threatLevels[event.target.value].armor)
     this.updateDefense()
 
     //determine how many points of advancement we get by using a random number gen between value array min and max
     let rand = this.threatLevels[event.target.value].value[1];
     if (this.state.randomized) rand = Math.round(this.threatLevels[event.target.value].value[0] + Math.random() * (this.threatLevels[event.target.value].value[1] - this.threatLevels[event.target.value].value[0]));
+
+    if (this.state.isElite) rand += 3
+    if (this.state.isHeroic) rand += 7
+    if (this.state.isEpic) rand += 10
+
     this.setState({ totalAdvancements: rand })
+
+    this.updateWeaponDamageCalcText()
   }
 
-  updateHealth(level) {
-    let health = (this.state.constitution + (parseInt(level) + 1)) * 5;
+  updateHealth(level, bonusHealth = 0) {
+    let health = (this.state.constitution + (parseInt(level) + 1)) * 5 + bonusHealth;
     if (health <= 0) health = 5
     this.setState({ health: health });
   }
@@ -306,7 +328,6 @@ class App extends React.Component {
   }
 
   async handleMoveTypeChange(event) {
-    console.log(event);
     if (event.target.value === "fly") {
       await this.setState({ canFly: !this.state.canFly })
     }
@@ -316,8 +337,29 @@ class App extends React.Component {
     if (event.target.value === "burrow") {
       await this.setState({ canBurrow: !this.state.canBurrow })
     }
+  }
 
-    console.log(this.state.canBurrow)
+  async handleBuffChange(event) {
+    if (event.target.value === "elite") {
+      await this.setState({ isElite: !this.state.isElite })
+    }
+    if (event.target.value === "heroic") {
+      await this.setState({ isHeroic: !this.state.isHeroic })
+    }
+    if (event.target.value === "epic") {
+      await this.setState({ isEpic: !this.state.isEpic })
+    }
+
+    this.handleThreatLevelChange({ target: { value: this.state.selectedThreatLevel } })
+  }
+
+  async handleDamageChange(event) {
+    if (event.target.value === "giantWeapons") {
+      await this.setState({ giantWeapons: !this.state.giantWeapons })
+    }
+    if (event.target.value === "berserker") {
+      await this.setState({ berserker: !this.state.berserker })
+    }
   }
 
   updateArmor(range) {
@@ -325,18 +367,23 @@ class App extends React.Component {
     if (this.state.selectedArmor === "min") armor = range[0]
     else if (this.state.selectedArmor === "max") armor = range[1]
     else armor = Math.round(range[0] + Math.random() * (range[1] - range[0]));
+
+    if (this.state.isEpic) armor += 3
+
     this.setState({ armor: armor })
   }
 
-  resetWeaponStateDamage() {
+  async resetWeaponStateDamage() {
     let accuracy = this.state.accuracyWeapons.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: '' })
     })
     let fighting = this.state.fightingWeapons.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: '' })
     })
-    this.setState({ accuracyWeapons: accuracy })
-    this.setState({ fightingWeapons: fighting })
+    await this.setState({ accuracyWeapons: accuracy })
+    await this.setState({ fightingWeapons: fighting })
+
+    this.updateWeaponDamageCalcText()
   }
 
   async handleRandomizeChange(event) {
@@ -344,52 +391,111 @@ class App extends React.Component {
     this.handleThreatLevelChange({ target: { value: this.state.selectedThreatLevel } })
   }
 
+  updateWeaponDamageCalcText() {
+    let accuracy = this.state.accuracyWeapons.map((weapon) => {
+      let dice = '';
+      let add = 0;
+      if (this.state.giantWeapons) {
+        if (weapon.useD3) dice = "" + weapon.damage + "d3 + 1d6"
+        else dice = "" + (parseInt(weapon.damage) + 1) + "d6"
+      }
+      else {
+        if (weapon.useD3) dice = "" + weapon.damage + "d3"
+        else dice = "" + (parseInt(weapon.damage)) + "d6"
+      }
+      if (this.state.berserker) add = weapon.mod + weapon.statMod + 3
+      else add = weapon.mod + weapon.statMod
+
+      let final = ''
+      if (add < 0) {
+        add = add * -1
+        final = dice + " - " + add
+      }
+      else {
+        final = dice + " + " + add
+      }
+
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: final })
+    })
+    let fighting = this.state.fightingWeapons.map((weapon) => {
+      let dice = '';
+      let add = 0;
+      if (this.state.giantWeapons) {
+        if (weapon.useD3) dice = "" + weapon.damage + "d3 + 1d6"
+        else dice = "" + (parseInt(weapon.damage) + 1) + "d6"
+      }
+      else {
+        if (weapon.useD3) dice = "" + weapon.damage + "d3"
+        else dice = "" + (parseInt(weapon.damage)) + "d6"
+      }
+      if (this.state.berserker) add = weapon.mod + weapon.statMod + 3
+      else add = weapon.mod + weapon.statMod
+
+      let final = ''
+      if (add < 0) {
+        add = add * -1
+        final = dice + " - " + add
+      }
+      else {
+        final = dice + " + " + add
+      }
+
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: 0, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: final })
+    })
+    this.setState({ accuracyWeapons: accuracy })
+    this.setState({ fightingWeapons: fighting })
+  }
+
   async updateAccuracyWeapons(event) {
     let buckler = 0;
     let temp = await event.map((weapon) => {
       if (weapon.weaponGroup === "Arcane Blast") {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.willpower, mod: weapon.mod })
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.willpower, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
       }
       if (weapon.value === "Spiked Buckler") {
         buckler = 1;
       }
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.perception, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.perception, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
     }
     )
-    this.setState({ accuracyWeapons: temp })
+    await this.setState({ accuracyWeapons: temp })
+    this.setWeaponFocusBonuses()
     this.setState({ hasSpikedBucklerMod: buckler })
   }
 
   async updateFightingWeapons(event) {
     let temp = await event.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.strength, mod: weapon.mod })
-    }
-    )
-    this.setState({ fightingWeapons: temp })
-  }
-
-  async updateAccuracyWeaponDamageMod(oldValue, newValue, isWillPower) {
-    let temp = this.state.accuracyWeapons
-    temp = await temp.map((weapon) => {
-      if (weapon.weaponGroup === "Arcane Blast" && isWillPower) {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
-      }
-      if (isWillPower || weapon.weaponGroup === "Arcane Blast") {
-        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
-      }
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
-    }
-    )
-    await this.setState({ accuracyWeapons: temp })
-  }
-
-  async updateFightingWeaponDamageMod(oldValue, newValue) {
-    let temp = this.state.fightingWeapons
-    temp = await temp.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: (weapon.statMod - oldValue) + newValue, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod + this.state.strength, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
     }
     )
     await this.setState({ fightingWeapons: temp })
+    this.setWeaponFocusBonuses()
+  }
+
+  async updateAccuracyWeaponDamageMod(newMod, isWillPower) {
+    let temp = this.state.accuracyWeapons
+    temp = await temp.map((weapon) => {
+      if (weapon.weaponGroup === "Arcane Blast" && isWillPower) {
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: newMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
+      }
+      if (isWillPower || weapon.weaponGroup === "Arcane Blast") {
+        return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
+      }
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: newMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
+    }
+    )
+    await this.setState({ accuracyWeapons: temp })
+    this.updateWeaponDamageCalcText()
+  }
+
+  async updateFightingWeaponDamageMod(newMod) {
+    let temp = this.state.fightingWeapons
+    temp = await temp.map((weapon) => {
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: newMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
+    }
+    )
+    await this.setState({ fightingWeapons: temp })
+    this.updateWeaponDamageCalcText()
   }
 
   async updateWeaponFocuses(event) {
@@ -430,41 +536,39 @@ class App extends React.Component {
     this.setState({ willpowerFocuses: event })
   }
 
-  setWeaponFocusBonuses() {
-
-
+  async setWeaponFocusBonuses() {
     let accuracy = this.state.accuracyWeapons
     accuracy = accuracy.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
     })
     let fighting = this.state.fightingWeapons
     fighting = fighting.map((weapon) => {
-      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod })
+      return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 0, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
     })
 
     this.state.accuracyFocuses.map((focus) => {
       accuracy = accuracy.map((weapon) => {
         if (weapon.weaponGroup === focus.value) {
-          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod })
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
         }
         else
-          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
 
       })
     })
     this.state.fightingFocuses.map((focus) => {
       fighting = fighting.map((weapon) => {
         if (weapon.weaponGroup === focus.value) {
-          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod })
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: 2, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
         }
         else
-          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod })
+          return (weapon = { label: weapon.label, value: weapon.value, weaponGroup: weapon.weaponGroup, damage: weapon.damage, range: weapon.range, reloadTime: weapon.reloadTime, focusMod: weapon.focusMod, statMod: weapon.statMod, mod: weapon.mod, useD3: weapon.useD3, finalDamageCalc: weapon.finalDamageCalc })
       })
     })
 
-    this.setState({ accuracyWeapons: accuracy })
-    this.setState({ fightingWeapons: fighting })
-
+    await this.setState({ accuracyWeapons: accuracy })
+    await this.setState({ fightingWeapons: fighting })
+    this.updateWeaponDamageCalcText()
   }
 
   async increment(e, type, adding) {
@@ -476,7 +580,6 @@ class App extends React.Component {
       else return;
       if (this.state.accuracy >= 0)
         await this.setState({ advancements: this.state.advancements + adding })
-
     }
     else if (type === "communication") {
       if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.communication < 0)
@@ -518,22 +621,28 @@ class App extends React.Component {
         await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "perception") {
-      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.perception < 0)
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.perception < 0) {
         await this.setState({ perception: this.state.perception + adding })
+        this.updateAccuracyWeaponDamageMod(this.state.perception, false)
+      }
       else return;
       if (this.state.perception >= 0)
         await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "strength") {
-      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.strength < 0)
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.strength < 0) {
         await this.setState({ strength: this.state.strength + adding })
+        this.updateFightingWeaponDamageMod(this.state.strength)
+      }
       else return;
       if (this.state.strength >= 0)
         await this.setState({ advancements: this.state.advancements + adding })
     }
     else if (type === "willpower") {
-      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.willpower < 0)
+      if (this.state.totalAdvancements > this.state.advancements || adding === -1 || this.state.willpower < 0) {
         await this.setState({ willpower: this.state.willpower + adding })
+        this.updateAccuracyWeaponDamageMod(this.state.willpower, true)
+      }
       else return;
       if (this.state.willpower >= 0)
         await this.setState({ advancements: this.state.advancements + adding })
@@ -546,7 +655,7 @@ class App extends React.Component {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell style={{ width: '40%' }}>
+              <TableCell style={{ width: '40%', verticalAlign: "Top" }}>
                 <form>        <label>
                   <Text style={styles.titleText}>Name: </Text>
                   <input type="text" value={this.state.name} onChange={this.handleNameChange} /></label>
@@ -581,17 +690,39 @@ class App extends React.Component {
                     <label htmlFor="rand">Random</label>
                   </label>
                   <label>
+                    <br></br><br></br>
+                    <label>
+                      <b>Buffs: </b>
+
+                      <input type="checkbox" name="buffTypes" value="elite" id="elite" checked={this.state.isElite} onClick={this.handleBuffChange} />
+                      <label htmlFor="elite">Elite</label>
+
+                      <input type="checkbox" name="buffTypes" value="heroic" id="heroic" checked={this.state.isHeroic} onClick={this.handleBuffChange} />
+                      <label htmlFor="heroic">Heroic</label>
+
+                      <input type="checkbox" name="buffTypes" value="epic" id="epic" checked={this.state.isEpic} onClick={this.handleBuffChange} />
+                      <label htmlFor="epic">Epic</label>
+                    </label>
                     <br></br>
+                    <label>
+                      <b>Damage Increasing Qualities:</b>
+                      <input type="checkbox" name="damageBuffTypes" value="giantWeapons" id="giantWeapons" checked={this.state.giantWeapons} onClick={this.handleDamageChange} />
+                      <label htmlFor="giantWeapons">Giant Weapons</label>
+
+                      <input type="checkbox" name="damageBuffTypes" value="berserker" id="berserker" checked={this.state.berserker} onClick={this.handleDamageChange} />
+                      <label htmlFor="berserker">Berserker</label>
+                    </label>
+                    <br></br><br></br>
                     <label>
                       <b>Additional Movement Types: </b>
 
-                      <input type="radio" name="movementTypes" value="fly" id="fly" checked={this.state.canFly} onClick={this.handleMoveTypeChange} />
+                      <input type="checkbox" name="movementTypes" value="fly" id="fly" checked={this.state.canFly} onClick={this.handleMoveTypeChange} />
                       <label htmlFor="fly">Flying</label>
 
-                      <input type="radio" name="movementTypes" value="swim" id="swim" checked={this.state.canSwim} onClick={this.handleMoveTypeChange} />
+                      <input type="checkbox" name="movementTypes" value="swim" id="swim" checked={this.state.canSwim} onClick={this.handleMoveTypeChange} />
                       <label htmlFor="swim">Swimming</label>
 
-                      <input type="radio" name="movementTypes" value="burrow" id="burrow" checked={this.state.canBurrow} onClick={this.handleMoveTypeChange} />
+                      <input type="checkbox" name="movementTypes" value="burrow" id="burrow" checked={this.state.canBurrow} onClick={this.handleMoveTypeChange} />
                       <label htmlFor="burrow">Burrowing</label>
                     </label>
                     <br></br><br></br>
@@ -995,171 +1126,171 @@ class App extends React.Component {
                         </Text>
                       </TableCell>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.accuracy}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.accuracy}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Accuracy</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Accuracy</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.accuracyFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.accuracyFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.communication}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.communication}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Communication</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Communication</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.communicationFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.communicationFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.constitution}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.constitution}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Constitution</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Constitution</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.constitutionFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.constitutionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.dexterity}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.dexterity}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Dexterity</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Dexterity</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.dexterityFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.dexterityFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.fighting}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.fighting}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Fighting</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Fighting</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.fightingFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.fightingFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.intelligence}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.intelligence}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Intelligence</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Intelligence</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.intelligenceFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.intelligenceFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.perception}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.perception}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Perception</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Perception</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.perceptionFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.perceptionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#e3fcf2"}}>
+                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.strength}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.strength}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Strength</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Strength</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.strengthFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.strengthFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </TableRow>
-                    <TableRow style={{backgroundColor:"#ffcfec"}}>
+                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
                       <Table>
                         <TableBody>
                           <TableRow>
-                            <TableCell style={{width:"10%"}}>
-                              <Text style={{fontSize:20, paddingLeft:'50%'}}>{this.state.willpower}</Text>
+                            <TableCell style={{ width: "10%" }}>
+                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.willpower}</Text>
                             </TableCell>
-                            <TableCell style={{width:"40%", textAlign:'center'}}>
-                              <Text style={{fontSize:20}}>Willpower</Text>
+                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                              <Text style={{ fontSize: 20 }}>Willpower</Text>
                             </TableCell>
                             <TableCell>
                               <Text>
-                              {this.state.willpowerFocuses.map((focus, i) => [i > 0 && ", ",<tag>{focus.label}</tag>])}
+                                {this.state.willpowerFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                               </Text>
                             </TableCell>
                           </TableRow>
@@ -1167,13 +1298,288 @@ class App extends React.Component {
                       </Table>
                     </TableRow>
                     <TableRow>
+                      <Table>
+                        <TableBody>
+                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Health
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Defense
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Armor
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <EditTextarea defaultValue={this.state.health.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <EditTextarea defaultValue={this.state.defense.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <EditTextarea defaultValue={this.state.armor.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow>
+                      <Table>
+                        <TableBody>
+                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Speed
+                              </Text>
+                            </TableCell>
+                            {this.state.canFly &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Flying Speed
+                                </Text>
+                              </TableCell>
+                            }
+                            {this.state.canSwim &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Swimming Speed
+                                </Text>
+                              </TableCell>
+                            }
+                            {this.state.canBurrow &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Burrowing Speed
+                                </Text>
+                              </TableCell>
+                            }
+                          </TableRow>
+                          <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                            </TableCell>
+                            {this.state.canFly &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            }
+                            {this.state.canSwim &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            }
+                            {this.state.canBurrow &&
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            }
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow>
+                      <Table>
+                        <TableBody>
+                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Weapon
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Attack Roll
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Damage
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Range
+                              </Text>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                Reload Time
+                              </Text>
+                            </TableCell>
+                          </TableRow>
+                          {this.state.accuracyWeapons.map((weapon, i) =>
+                            <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                {weapon.value}
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                {
+                                  this.state.berserker ?
+                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                    :
+                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting)).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                }
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            </TableRow>
+                          )}
+                          {this.state.fightingWeapons.map((weapon, i) =>
+                            <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                {weapon.value}
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                {
+                                  this.state.berserker ?
+                                    <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
+                                    :
+                                    <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting)).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
+                                }
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableRow>
+                    <TableRow>
                       <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
                         <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                          
+                          Special Qualities
                         </Text>
                       </TableCell>
                     </TableRow>
+                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                              Favored Stunts:
+                            </TableCell>
+                            <TableCell>
+                              <TextInput
+                                {...this.props}
+                                multiline={true}
+                                onChangeText={(text) => {
+                                  this.setState({ text })
+                                }}
+                                onContentSizeChange={(event) => {
+                                  this.setState({ height: event.nativeEvent.contentSize.height })
+                                }}
+                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                placeholderTextColor={"grey"}
+                                placeholder="..."
+                              />
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                              Talents:
+                            </TableCell>
+                            <TableCell>
+                              <TextInput
+                                {...this.props}
+                                multiline={true}
+                                onChangeText={(text) => {
+                                  this.setState({ text })
+                                }}
+                                onContentSizeChange={(event) => {
+                                  this.setState({ height: event.nativeEvent.contentSize.height })
+                                }}
+                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                placeholderTextColor={"grey"}
+                                placeholder="..."
+                              />
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                              Specializations:
+                            </TableCell>
+                            <TableCell>
+                              <TextInput
+                                {...this.props}
+                                multiline={true}
+                                onChangeText={(text) => {
+                                  this.setState({ text })
+                                }}
+                                onContentSizeChange={(event) => {
+                                  this.setState({ height: event.nativeEvent.contentSize.height })
+                                }}
+                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                placeholderTextColor={"grey"}
+                                placeholder="..."
+                              />
+                            </TableCell>
+                          </TableRow>
+
+                          {this.state.berserker &&
+                            <TableRow>
+                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                Berserker:
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  The monster can enter a berserker rage. It gains a +2 bonus to hit, +3 to damage, and now has a +2 bonus to any rolls to resist effects that would induce calm or fear. However, it must attack adjacent foes only (enemy or ally) until they are down or dead. This state lasts a number of turns equal to 6 – the monster’s Willpower (minimum of 1 turn). After this period, the monster can then leave its berserker rage with a TN 11 Willpower (Self-Disicipline) test.
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          }
+
+                          {this.state.giantWeapons &&
+                            <TableRow>
+                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                Giant Weapons:
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  Creatures must have the big or large and in charge qualities, or must otherwise be large enough, to have access to giant-sized weapons, which inflict an additional 1d6 damage more than usual. Creatures within the size ranges of typical Player Characters can’t use these.
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          }
+
+                          
+
+
+
+                        </TableBody>
+                      </Table>
+                    </TableRow>
                   </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                    <TableCell style={{ backgroundColor: "#03a879", height: 30, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, paddingLeft: 40, paddingRight: 40, textAlign:"center" }}>
+                        <Text style={styles.whiteTitleText}>
+                          Threat: {this.state.threatLevelLabel}
+                        </Text>
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
                 </Table>
               </TableCell>
             </TableRow>
