@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Select from 'react-select';
 import { EditTextarea } from 'react-edit-text';
 import { TableFooter } from '@mui/material';
+import html2canvas from 'html2canvas';
 
 const styles = StyleSheet.create({
 
@@ -90,6 +91,7 @@ class App extends React.Component {
     this.handleMoveTypeChange = this.handleMoveTypeChange.bind(this);
     this.handleBuffChange = this.handleBuffChange.bind(this);
     this.handleDamageChange = this.handleDamageChange.bind(this);
+    this.handleDownloadImage = this.handleDownloadImage.bind(this);
   }
 
 
@@ -116,13 +118,13 @@ class App extends React.Component {
     { label: 'Short Bow (Bows)', value: 'Short Bow', weaponGroup: "Bows", damage: 1, range: "16-32 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
     { label: 'Long Bow (Bows)', value: 'Long Bow', weaponGroup: "Bows", damage: 1, range: "26-52 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
     { label: 'Fist (Brawling)', value: 'Fist', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 0, useD3: true, finalDamageCalc: '' },
-    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: 1, focusMod: 0, statMod: 0, mod: "", useD3: true, finalDamageCalc: '' },
+    { label: 'Guantlet (Brawling)', value: 'Guantlet', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: 1, focusMod: 0, statMod: 1, mod: 0, useD3: true, finalDamageCalc: '' },
     { label: 'Improvised Weapon (Brawling)', value: 'Improvised Weapon', weaponGroup: "Brawling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1, useD3: false, finalDamageCalc: '' },
     { label: 'Main Gauche (Dueling)', value: 'Main Gauche', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
     { label: 'Rapier (Dueling)', value: 'Rapier', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 3, useD3: false, finalDamageCalc: '' },
     { label: 'Spiked Buckler (Dueling)', value: 'Spiked Buckler', weaponGroup: "Dueling", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: -1, useD3: false, finalDamageCalc: '' },
     { label: 'Dagger (Light Blades)', value: 'Dagger', weaponGroup: "Light Blades", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
-    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: 1, range: "Melee", reloadTime: 2, focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
+    { label: 'Short Sword (Light Blades)', value: 'Short Sword', weaponGroup: "Light Blades", damage: 1, range: "Melee", reloadTime: "", focusMod: 0, statMod: 2, mod: 0, useD3: false, finalDamageCalc: '' },
     { label: 'Throwing Knife (Light Blades)', value: 'Throwing Knife', weaponGroup: "Light Blades", damage: 1, range: "6-12 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
     { label: 'Fustibale (Slings)', value: 'Fustibale', weaponGroup: "Slings", damage: 1, range: "14-28 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 1, useD3: false, finalDamageCalc: '' },
     { label: 'Hunting Sling (Slings)', value: 'Hunting Sling', weaponGroup: "Slings", damage: 1, range: "12-24 Yards", reloadTime: "Minor Action", focusMod: 0, statMod: 0, mod: 0, useD3: false, finalDamageCalc: '' },
@@ -266,6 +268,23 @@ class App extends React.Component {
   ]
 
   async componentDidMount() {
+
+  }
+
+  async handleDownloadImage() {
+    let element = document.getElementById('print');
+    let canvas = await html2canvas(element);
+    let data = canvas.toDataURL('image/jpg');
+    let link = document.createElement('a');
+
+    link.href = data;
+    link.download = 'downloaded-image.jpg';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(link);
 
   }
 
@@ -1108,479 +1127,483 @@ class App extends React.Component {
                 </form>
               </TableCell>
               <TableCell style={{ height: "100%", verticalAlign: "Top", maxWidth: "70%" }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell style={{ backgroundColor: "#03a879", height: 30, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingLeft: 40, paddingRight: 40 }}>
-                        <Text style={styles.whiteTitleText}>
-                          {this.state.name}
-                        </Text>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
-                        <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                          Abilities (Focuses)
-                        </Text>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.accuracy}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Accuracy</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.accuracyFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.communication}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Communication</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.communicationFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.constitution}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Constitution</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.constitutionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.dexterity}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Dexterity</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.dexterityFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.fighting}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Fighting</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.fightingFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.intelligence}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Intelligence</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.intelligenceFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.perception}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Perception</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.perceptionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.strength}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Strength</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.strengthFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "10%" }}>
-                              <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.willpower}</Text>
-                            </TableCell>
-                            <TableCell style={{ width: "40%", textAlign: 'center' }}>
-                              <Text style={{ fontSize: 20 }}>Willpower</Text>
-                            </TableCell>
-                            <TableCell>
-                              <Text>
-                                {this.state.willpowerFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow>
-                      <Table>
-                        <TableBody>
-                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Health
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Defense
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Armor
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <EditTextarea defaultValue={this.state.health.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <EditTextarea defaultValue={this.state.defense.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <EditTextarea defaultValue={this.state.armor.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow>
-                      <Table>
-                        <TableBody>
-                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Speed
-                              </Text>
-                            </TableCell>
-                            {this.state.canFly &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                  Flying Speed
-                                </Text>
-                              </TableCell>
-                            }
-                            {this.state.canSwim &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                  Swimming Speed
-                                </Text>
-                              </TableCell>
-                            }
-                            {this.state.canBurrow &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                  Burrowing Speed
-                                </Text>
-                              </TableCell>
-                            }
-                          </TableRow>
-                          <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                            </TableCell>
-                            {this.state.canFly &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                            }
-                            {this.state.canSwim &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                            }
-                            {this.state.canBurrow &&
-                              <TableCell style={{ textAlign: 'center' }}>
-                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                            }
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow>
-                      <Table>
-                        <TableBody>
-                          <TableRow style={{ backgroundColor: "#1a1b1f" }}>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Weapon
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Attack Roll
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Damage
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Range
-                              </Text>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                                Reload Time
-                              </Text>
-                            </TableCell>
-                          </TableRow>
-                          {this.state.accuracyWeapons.map((weapon, i) =>
-                            <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                {weapon.value}
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                {
-                                  this.state.berserker ?
-                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} />
-                                    :
-                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy)).toString()} style={{ padding: 5, maxHeight: 20 }} />
-                                }
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                            </TableRow>
-                          )}
-                          {this.state.fightingWeapons.map((weapon, i) =>
-                            <TableRow style={{ backgroundColor: "#ffcfec" }}>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                {weapon.value}
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                {
-                                  this.state.berserker ?
-                                    <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
-                                    :
-                                    <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting)).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
-                                }
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                              <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
-                                <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
-                        <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
-                          Special Qualities
-                        </Text>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow style={{ backgroundColor: "#e3fcf2" }}>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                              Favored Stunts:
-                            </TableCell>
-                            <TableCell>
-                              <TextInput
-                                {...this.props}
-                                multiline={true}
-                                onChangeText={(text) => {
-                                  this.setState({ text })
-                                }}
-                                onContentSizeChange={(event) => {
-                                  this.setState({ height: event.nativeEvent.contentSize.height })
-                                }}
-                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                placeholderTextColor={"grey"}
-                                placeholder="..."
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                              Talents:
-                            </TableCell>
-                            <TableCell>
-                              <TextInput
-                                {...this.props}
-                                multiline={true}
-                                onChangeText={(text) => {
-                                  this.setState({ text })
-                                }}
-                                onContentSizeChange={(event) => {
-                                  this.setState({ height: event.nativeEvent.contentSize.height })
-                                }}
-                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                placeholderTextColor={"grey"}
-                                placeholder="..."
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                              Specializations:
-                            </TableCell>
-                            <TableCell>
-                              <TextInput
-                                {...this.props}
-                                multiline={true}
-                                onChangeText={(text) => {
-                                  this.setState({ text })
-                                }}
-                                onContentSizeChange={(event) => {
-                                  this.setState({ height: event.nativeEvent.contentSize.height })
-                                }}
-                                style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                placeholderTextColor={"grey"}
-                                placeholder="..."
-                              />
-                            </TableCell>
-                          </TableRow>
-
-                          {this.state.berserker &&
+                <div id="print">
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell style={{ backgroundColor: "#03a879", height: 30, borderTopLeftRadius: 40, borderTopRightRadius: 40, paddingLeft: 40, paddingRight: 40 }}>
+                          <Text style={styles.whiteTitleText}>
+                            {this.state.name}
+                          </Text>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
+                          <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                            Abilities (Focuses)
+                          </Text>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                        <Table>
+                          <TableBody>
                             <TableRow>
-                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                Berserker:
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.accuracy}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Accuracy</Text>
                               </TableCell>
                               <TableCell>
                                 <Text>
-                                  The monster can enter a berserker rage. It gains a +2 bonus to hit, +3 to damage, and now has a +2 bonus to any rolls to resist effects that would induce calm or fear. However, it must attack adjacent foes only (enemy or ally) until they are down or dead. This state lasts a number of turns equal to 6 – the monster’s Willpower (minimum of 1 turn). After this period, the monster can then leave its berserker rage with a TN 11 Willpower (Self-Disicipline) test.
+                                  {this.state.accuracyFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                                 </Text>
                               </TableCell>
                             </TableRow>
-                          }
-
-                          {this.state.giantWeapons &&
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                        <Table>
+                          <TableBody>
                             <TableRow>
-                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                Giant Weapons:
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.communication}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Communication</Text>
                               </TableCell>
                               <TableCell>
                                 <Text>
-                                  Creatures must have the big or large and in charge qualities, or must otherwise be large enough, to have access to giant-sized weapons, which inflict an additional 1d6 damage more than usual. Creatures within the size ranges of typical Player Characters can’t use these.
+                                  {this.state.communicationFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
                                 </Text>
                               </TableCell>
                             </TableRow>
-                          }
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.constitution}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Constitution</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.constitutionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.dexterity}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Dexterity</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.dexterityFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.fighting}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Fighting</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.fightingFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.intelligence}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Intelligence</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.intelligenceFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.perception}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Perception</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.perceptionFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.strength}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Strength</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.strengthFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "10%" }}>
+                                <Text style={{ fontSize: 20, paddingLeft: '50%' }}>{this.state.willpower}</Text>
+                              </TableCell>
+                              <TableCell style={{ width: "40%", textAlign: 'center' }}>
+                                <Text style={{ fontSize: 20 }}>Willpower</Text>
+                              </TableCell>
+                              <TableCell>
+                                <Text>
+                                  {this.state.willpowerFocuses.map((focus, i) => [i > 0 && ", ", <tag>{focus.label}</tag>])}
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow>
+                        <Table>
+                          <TableBody>
+                            <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Health
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Defense
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Armor
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                            <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.health.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.defense.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.armor.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow>
+                        <Table>
+                          <TableBody>
+                            <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Speed
+                                </Text>
+                              </TableCell>
+                              {this.state.canFly &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                    Flying Speed
+                                  </Text>
+                                </TableCell>
+                              }
+                              {this.state.canSwim &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                    Swimming Speed
+                                  </Text>
+                                </TableCell>
+                              }
+                              {this.state.canBurrow &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                    Burrowing Speed
+                                  </Text>
+                                </TableCell>
+                              }
+                            </TableRow>
+                            <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              {this.state.canFly &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                              }
+                              {this.state.canSwim &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                              }
+                              {this.state.canBurrow &&
+                                <TableCell style={{ textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={this.state.speed.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                              }
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow>
+                        <Table>
+                          <TableBody>
+                            <TableRow style={{ backgroundColor: "#1a1b1f" }}>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Weapon
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Attack Roll
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Damage
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Range
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Reload Time
+                                </Text>
+                              </TableCell>
+                            </TableRow>
+                            {this.state.accuracyWeapons.map((weapon, i) =>
+                              <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  {weapon.value}
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  {
+                                    this.state.berserker ?
+                                      <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                      :
+                                      <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy)).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                  }
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                              </TableRow>
+                            )}
+                            {this.state.fightingWeapons.map((weapon, i) =>
+                              <TableRow style={{ backgroundColor: "#ffcfec" }}>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  {weapon.value}
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  {
+                                    this.state.berserker ?
+                                      <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
+                                      :
+                                      <div><EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting)).toString()} style={{ padding: 5, maxHeight: 20 }} /></div>
+                                  }
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.finalDamageCalc} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.range} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                                <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
+                                  <EditTextarea defaultValue={weapon.reloadTime} style={{ padding: 5, maxHeight: 20 }} />
+                                </TableCell>
+                              </TableRow>
+                            )}
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell style={{ textAlign: 'center', backgroundColor: "#1a1b1f" }}>
+                          <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                            Special Qualities
+                          </Text>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow style={{ backgroundColor: "#e3fcf2" }}>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                Favored Stunts:
+                              </TableCell>
+                              <TableCell>
+                                <TextInput
+                                  {...this.props}
+                                  multiline={true}
+                                  onChangeText={(text) => {
+                                    this.setState({ text })
+                                  }}
+                                  onContentSizeChange={(event) => {
+                                    this.setState({ height: event.nativeEvent.contentSize.height })
+                                  }}
+                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                  placeholderTextColor={"grey"}
+                                  placeholder="..."
+                                />
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                Talents:
+                              </TableCell>
+                              <TableCell>
+                                <TextInput
+                                  {...this.props}
+                                  multiline={true}
+                                  onChangeText={(text) => {
+                                    this.setState({ text })
+                                  }}
+                                  onContentSizeChange={(event) => {
+                                    this.setState({ height: event.nativeEvent.contentSize.height })
+                                  }}
+                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                  placeholderTextColor={"grey"}
+                                  placeholder="..."
+                                />
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                Specializations:
+                              </TableCell>
+                              <TableCell>
+                                <TextInput
+                                  {...this.props}
+                                  multiline={true}
+                                  onChangeText={(text) => {
+                                    this.setState({ text })
+                                  }}
+                                  onContentSizeChange={(event) => {
+                                    this.setState({ height: event.nativeEvent.contentSize.height })
+                                  }}
+                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
+                                  placeholderTextColor={"grey"}
+                                  placeholder="..."
+                                />
+                              </TableCell>
+                            </TableRow>
 
-                          
+                            {this.state.berserker &&
+                              <TableRow>
+                                <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                  Berserker:
+                                </TableCell>
+                                <TableCell>
+                                  <Text>
+                                    The monster can enter a berserker rage. It gains a +2 bonus to hit, +3 to damage, and now has a +2 bonus to any rolls to resist effects that would induce calm or fear. However, it must attack adjacent foes only (enemy or ally) until they are down or dead. This state lasts a number of turns equal to 6 – the monster’s Willpower (minimum of 1 turn). After this period, the monster can then leave its berserker rage with a TN 11 Willpower (Self-Disicipline) test.
+                                  </Text>
+                                </TableCell>
+                              </TableRow>
+                            }
+
+                            {this.state.giantWeapons &&
+                              <TableRow>
+                                <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                  Giant Weapons:
+                                </TableCell>
+                                <TableCell>
+                                  <Text>
+                                    Creatures must have the big or large and in charge qualities, or must otherwise be large enough, to have access to giant-sized weapons, which inflict an additional 1d6 damage more than usual. Creatures within the size ranges of typical Player Characters can’t use these.
+                                  </Text>
+                                </TableCell>
+                              </TableRow>
+                            }
 
 
 
-                        </TableBody>
-                      </Table>
-                    </TableRow>
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                    <TableCell style={{ backgroundColor: "#03a879", height: 30, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, paddingLeft: 40, paddingRight: 40, textAlign:"center" }}>
-                        <Text style={styles.whiteTitleText}>
-                          Threat: {this.state.threatLevelLabel}
-                        </Text>
-                      </TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
+
+
+                          </TableBody>
+                        </Table>
+                      </TableRow>
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell style={{ backgroundColor: "#03a879", height: 30, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, paddingLeft: 40, paddingRight: 40, textAlign: "center" }}>
+                          <Text style={styles.whiteTitleText}>
+                            Threat: {this.state.threatLevelLabel}
+                          </Text>
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </div>
+                <br></br>
+                <button type="button" onClick={this.handleDownloadImage} style={{width:"100%"}}>Download as Image</button>
               </TableCell>
             </TableRow>
           </TableBody>
