@@ -1423,9 +1423,9 @@ class App extends React.Component {
                               <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
                                 {
                                   this.state.berserker ?
-                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy) + 2).toString()} style={{ padding: 5, maxHeight: 20 }} />
                                     :
-                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.fighting)).toString()} style={{ padding: 5, maxHeight: 20 }} />
+                                    <EditTextarea defaultValue={(parseInt(weapon.focusMod) + parseInt(this.state.accuracy)).toString()} style={{ padding: 5, maxHeight: 20 }} />
                                 }
                               </TableCell>
                               <TableCell style={{ borderWidth: 2, borderColor: "#e665a7", textAlign: 'center' }}>
