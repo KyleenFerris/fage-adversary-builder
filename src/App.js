@@ -71,7 +71,8 @@ class App extends React.Component {
       isHeroic: false,
       isEpic: false,
       giantWeapons: false,
-      berserker: false
+      berserker: false,
+      qualities: []
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -92,6 +93,7 @@ class App extends React.Component {
     this.handleBuffChange = this.handleBuffChange.bind(this);
     this.handleDamageChange = this.handleDamageChange.bind(this);
     this.handleDownloadImage = this.handleDownloadImage.bind(this);
+    this.handleQualityChange = this.handleQualityChange.bind(this);
   }
 
 
@@ -265,6 +267,39 @@ class App extends React.Component {
     { label: "Faith", value: "Faith" },
     { label: "Morale", value: "Morale" },
     { label: "Self-Discipline", value: "Self-Discipline" }
+  ]
+
+  qualities = [
+    { label: 'Agile', value: 'agile', description: " The monster is exceptionally agile and quick for its type. It has +2 Dexterity and can go prone or stand up as a free action, without using up any movement if they do so while using the Move action or a similar movement-based action. " },
+    { label: 'Amphibious', value: 'Amphibious', description: " Sea devils can survive and breathe on both land and underwater. Sea devils must spend at least one hour a day submerged in water or take 2d6 damage." },
+    { label: 'Aquatic', value: 'aquatic', description: "The monster gains the ability to breathe underwater and can swim equal to its normal Speed. It also suffers no penalties for moving, attacking, or otherwise operating underwater." },
+    { label: 'Big', value: 'big', description: "This creature’s mass makes it difficult to push or knock down. Knock Prone and Skirmish stunts, and any other stunts that might push, pull, knock down, or otherwise move the creature around each require +1 SP over their normal costs to work. In the case of stunts with a variable cost, such as Skirmish, the +1 SP cost increase is on top of the total number of SP it normally costs, so moving the creature 6 yards costs 4 SP instead of the usual 3, for instance." },
+    { label: 'Blending', value: 'blending', description: "The monster can camouflage itself in some manner, blending into its surroundings. This gives the monster a +2 bonus to any Dexterity (Stealth) checks based on hiding or avoiding being seen." },
+    { label: 'Clockwork', value: 'clockwork', description: "The monster is a clockwork or other mechanical model of an actual monster. The monster no longer needs to breathe, eat, or sleep. Because it is a clockwork construct, any damage to it cannot be healed and must instead be repaired. A repair action works like the Heal action but uses Intelligence (Engineering) instead of Intelligence (Healing). Clockwork monsters often have tough hides representing their artificial structure." },
+    { label: 'Dark Sight', value: 'dark sight', description: "The monster can see normally in total darkness." },
+    { label: 'Eldritch', value: 'eldritch', description: " The monster is a twisted, madness-inducing mockery of a usual creature of its type. As a major action, it can induce a condition known as the “creeping dread,” causing all creatures who can see it to make an opposed Willpower (Courage) test vs. the monster’s Strength (Intimidation) or Willpower (Self-Discipline), whichever is greater. Success makes a target immune to this power for the rest of the encounter and gives a noncumulative +1 bonus to resist the creeping dread from this type of monster in the future. Failure means the target suffers a –2 penalty to all actions for the rest of the encounter due to overwhelming feelings of fear and disturbing hallucinations. Other eldritch or demonic creatures are immune to creeping dread. Many eldritch creatures have various other special qualities that represent their strange, alien origins. " },
+    { label: 'Elemental Resistance', value: 'elemental resistance', description: "The monster is immune to a certain type of damage such as fire, cold, earth, electricity, or water. Magical damage of this type can still harm the monster, but it does half damage." },
+    { label: 'Fae', value: 'fae', description: " This monster leaves no tracks in forests or other natural environments (–2 penalty to track it in such locales), does not age, and has a +2 bonus to resist non-magical poisons, drugs, and diseases. Many fae creatures have additional special qualities, such as Vulnerability (Cold Iron) and Magic Resistance. " },
+    { label: 'Fast', value: 'fast', description: " This monster adds +2 to its Speed and can now do two of its lowest damage attacks with one major action. Both of these attacks can generate stunt points." },
+    { label: 'Holy', value: 'holy', description: " The monster is blessed or descended from a god or other divine creature. The monster’s attacks are now considered to be magical and blessed, working effectively against crea- tures vulnerable to such attacks. Holy monsters often have various other special qualities inherited or bestowed from their divine sires or patrons. " },
+    { label: 'Incorporeal Form', value: 'incorporeal form', description: "Creatures with this quality can only be damaged by magical weapons, spells, and qualities, as well as the psychic intention to harm them. Magical methods inflict full damage, while a character using a missile or melee weapon does 1 point of damage or damage equal to their Willpower ability, whichever is higher. If a stunt would increase damage from a mundane attack, it does so by the lowest amount that can be rolled." },
+    { label: 'Large and In Charge', value: 'large and in charge', description: "The size and bulk of the creature are truly impressive—bigger than the big quality, which may not be taken with it. It is immune to the stunts that might move it, including Skirmish, and Knock Prone, except when performed by other very large creatures or equivalent forces, such as other creatures with the large and in charge quality. Its long reach also treats enemies up to 4 yards away as being adjacent." },
+    { label: 'Magic Resistance', value: 'magic resistance', description: " The monster gains a +2 bonus to resist spells or other magical effects. It possesses an Armor Rating against magical damage equal to its Willpower +2. Such monsters often can’t be healed magically. " },
+    { label: 'Many-Headed', value: 'many-headed', description: " The monster gains one or more additional heads. It gains 1 Perception and can make an additional attack each turn. If it possesses a bite-based attack, the monster can use this attack with its other heads and can make one additional attack each turn per head. Attacks with all of the heads can be made as a major action but they are all simple tests and do not generate stunt points. " },
+    { label: 'Mighty', value: 'might', description: "The monster is exceptionally strong. It gains the Strength (Might) focus, and +2 Strength-based tests. If it already has the Might focus, it gains an additional +1 to Strength (Might) tests, stacking with other bonuses." },
+    { label: 'Pack Advantage', value: 'pack advantage', description: " If using the Set-Up stunt with another member of its pack, the monster grants its ally a +2 damage bonus in addition to the normal +2 ability bonus. The monster may also use the Set-Up stunt for 1 SP less than normal (2 SP). It should be noted that this special quality is only appropriate for creatures that operate in groups or packs." },
+    { label: 'Piercing', value: 'piercing', description: " One or more of the monster’s attacks now halves a target’s Armor Rating when it hits. If the monster uses the Pierce Armor stunt, it ignores the Armor Rating altogether. " },
+    { label: 'Regenerate', value: 'regenerate', description: " The monster can heal Health = Constitution (Minimum 2) as a 2 SP stunt. This stunt may be used multiple times in the same roll if enough SP are available, increasing the healing effect. Wounds of a certain type cannot be healed with regenerate— this varies depending on the monster but is typically fire or acid-based damage. " },
+    { label: 'Shadow', value: 'shadow', description: " The monster is attuned to the mystical realms of darkness and shadow. It takes half damage from all non-magical attacks and can use the regenerate and blending powers in darkness or dim light. In sunlight or other bright light, it takes damage normally, and all light-based magical attacks do an extra 1d6 penetrating damage. " },
+    { label: 'Shifting', value: 'shifting', description: " Through some magical enhancement or due to a monster’s ties to some other time, place or dimension, it can use its Move action to travel to any point within its normal movement range instantly, bypassing any barriers or obstacles in the way. In addition, this monster can ignore barriers and obstacles when it uses the Skirmish stunt to move itself during combat. " },
+    { label: 'Small', value: 'smell', description: "This monster is exceptionally small. It gains +2 defense due to its size but loses 2 Strength. It also gains a +2 circumstance bonus to situations where its size would be a benefit, such as hiding in small spaces." },
+    { label: 'Spectral Attack', value: 'spectral attack', description: " The monster’s attack ignores the target’s shield bonus to Defense and inflicts penetrating damage. This is reduced by half the target’s Willpower (rounded up). " },
+    { label: 'Spectral', value: 'spectral', description: " This monster is a ghost of a once-living creature or hails from some realm where beings exist in a spirit-like state. A spectral being is immune to poison, disease, and other mortal ailments. This creature is incorporeal. It ignores the effects of terrain and normally only magical attacks (spells or hits from magic weapons) can harm it; other attacks pass through it without effect. A character attacking this creature can perform a special stunt called Spirit Bane for 3 SP, however. The character then inflicts normal weapon damage but substitutes Willpower for Strength or Perception. Many creatures with this power also have the Spectral Attack special power. " },
+    { label: 'Sunblighted', value: 'sunblighted', description: " The creature takes damage from sunlight. Minor exposure causes pain, doing 1d6 damage from reflected, indirect, or narrow beams of sunlight. Full exposure requires the creature to make a TN 15 Constitution (Stamina) test for each turn it is exposed. Failure results in the creature being destroyed; success still means the creatures take 3d6 damage " },
+    { label: 'Unholy', value: 'unholy', description: " The monster is cursed or hails from some terrible hell realm. It cannot enter sacred or holy ground without taking 1d6 penetrating damage per turn and all attacks against it with holy relics or blessed objects do an additional 1d6 damage. " },
+    { label: 'Vicious Combat', value: 'vicious combatant', description: " Instincts and aggression make the creature extremely deadly in combat. It can make two different specific attacks, such as a Bite followed by a Claw, with just one major action. Roll each attack separately. Either attack, or both, can generate and use stunt points. " },
+    { label: 'Vulnerability', value: 'vulnerability', description: " This isn’t a power so much as a special weakness. When attacked with a substance or element to which the monster is vulnerable, the creature takes an additional 1d6 damage and its Armor Rating is halved, or its Armor Rating is completely eliminated if the attacker used the Pierce Armor stunt. " },
+    { label: 'Weightless', value: 'weightless', description: " The creature can Fly at its Speed, and can hover at will. Such creatures cannot fall or be rendered Prone. " }
   ]
 
   async componentDidMount() {
@@ -553,6 +588,10 @@ class App extends React.Component {
   }
   updateWillpowerFocuses(event) {
     this.setState({ willpowerFocuses: event })
+  }
+
+  handleQualityChange(event) {
+    this.setState({ qualities: event })
   }
 
   async setWeaponFocusBonuses() {
@@ -1124,9 +1163,24 @@ class App extends React.Component {
                     </TableBody>
                   </Table>
 
+                  <br></br>
+                  <label>
+                    <Select
+                      defaultValue={[]}
+                      isMulti
+                      placeholder="Qualities"
+                      closeMenuOnSelect={false}
+                      name="Qualities"
+                      options={this.qualities}
+                      className="quality-multi-select"
+                      classNamePrefix="quality-select"
+                      onChange={this.handleQualityChange}
+                    />
+                  </label>
+
                 </form>
               </TableCell>
-              <TableCell style={{ height: "100%", verticalAlign: "Top", maxWidth: "70%" }}>
+              <TableCell style={{ height: "100%", verticalAlign: "Top", maxWidth: "70%", minWidth: 1000 }}>
                 <div id="print">
                   <Table>
                     <TableHead>
@@ -1501,19 +1555,8 @@ class App extends React.Component {
                                 Favored Stunts:
                               </TableCell>
                               <TableCell>
-                                <TextInput
-                                  {...this.props}
-                                  multiline={true}
-                                  onChangeText={(text) => {
-                                    this.setState({ text })
-                                  }}
-                                  onContentSizeChange={(event) => {
-                                    this.setState({ height: event.nativeEvent.contentSize.height })
-                                  }}
-                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                  placeholderTextColor={"grey"}
-                                  placeholder="..."
-                                />
+                                <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
+                                </EditTextarea>
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -1521,19 +1564,8 @@ class App extends React.Component {
                                 Talents:
                               </TableCell>
                               <TableCell>
-                                <TextInput
-                                  {...this.props}
-                                  multiline={true}
-                                  onChangeText={(text) => {
-                                    this.setState({ text })
-                                  }}
-                                  onContentSizeChange={(event) => {
-                                    this.setState({ height: event.nativeEvent.contentSize.height })
-                                  }}
-                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                  placeholderTextColor={"grey"}
-                                  placeholder="..."
-                                />
+                                <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
+                                </EditTextarea>
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -1541,31 +1573,21 @@ class App extends React.Component {
                                 Specializations:
                               </TableCell>
                               <TableCell>
-                                <TextInput
-                                  {...this.props}
-                                  multiline={true}
-                                  onChangeText={(text) => {
-                                    this.setState({ text })
-                                  }}
-                                  onContentSizeChange={(event) => {
-                                    this.setState({ height: event.nativeEvent.contentSize.height })
-                                  }}
-                                  style={[styles.default, { width: "100%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", height: Math.max(45, this.state.height) }]}
-                                  placeholderTextColor={"grey"}
-                                  placeholder="..."
-                                />
+                                <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
+
+                                </EditTextarea>
                               </TableCell>
                             </TableRow>
 
                             {this.state.berserker &&
                               <TableRow>
                                 <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                  Berserker:
+                                  <EditTextarea style={{ height: 10 }} defaultValue="Berserker">:
+                                  </EditTextarea>
                                 </TableCell>
                                 <TableCell>
-                                  <Text>
-                                    The monster can enter a berserker rage. It gains a +2 bonus to hit, +3 to damage, and now has a +2 bonus to any rolls to resist effects that would induce calm or fear. However, it must attack adjacent foes only (enemy or ally) until they are down or dead. This state lasts a number of turns equal to 6 – the monster’s Willpower (minimum of 1 turn). After this period, the monster can then leave its berserker rage with a TN 11 Willpower (Self-Disicipline) test.
-                                  </Text>
+                                  <EditTextarea style={{ minWidth: "100%" }} defaultValue="The monster can enter a berserker rage. It gains a +2 bonus to hit, +3 to damage, and now has a +2 bonus to any rolls to resist effects that would induce calm or fear. However, it must attack adjacent foes only (enemy or ally) until they are down or dead. This state lasts a number of turns equal to 6 – the monster’s Willpower (minimum of 1 turn). After this period, the monster can then leave its berserker rage with a TN 11 Willpower (Self-Disicipline) test">
+                                  </EditTextarea>
                                 </TableCell>
                               </TableRow>
                             }
@@ -1573,17 +1595,30 @@ class App extends React.Component {
                             {this.state.giantWeapons &&
                               <TableRow>
                                 <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                  Giant Weapons:
+                                  <EditTextarea style={{ height: 10 }} defaultValue="Giant Weapons">:
+                                  </EditTextarea>
                                 </TableCell>
                                 <TableCell>
-                                  <Text>
-                                    Creatures must have the big or large and in charge qualities, or must otherwise be large enough, to have access to giant-sized weapons, which inflict an additional 1d6 damage more than usual. Creatures within the size ranges of typical Player Characters can’t use these.
-                                  </Text>
+                                  <EditTextarea style={{ minWidth: "100%" }} defaultValue="Creatures must have the big or large and in charge qualities, or must otherwise be large enough, to have access to giant-sized weapons, which inflict an additional 1d6 damage more than usual. Creatures within the size ranges of typical Player Characters can’t use these.">
+                                  </EditTextarea>
                                 </TableCell>
                               </TableRow>
+
                             }
 
-
+                            {this.state.qualities.map((quality, i) =>
+                              <TableRow style={{ height: Math.max(45, (quality.description.length) / 3) }}>
+                                <TableCell style={{ width: "20%" }}>
+                                  <EditTextarea style={{ fontWeight: 700 }} defaultValue={quality.label}>
+                                  </EditTextarea>
+                                </TableCell>
+                                <TableCell>
+                                  <EditTextarea
+                                    style={{ minWidth: "100%" }} defaultValue={quality.description}>
+                                  </EditTextarea >
+                                </TableCell>
+                              </TableRow>
+                            )}
 
 
 
@@ -1603,7 +1638,7 @@ class App extends React.Component {
                   </Table>
                 </div>
                 <br></br>
-                <button type="button" onClick={this.handleDownloadImage} style={{width:"100%"}}>Download as Image</button>
+                <button type="button" onClick={this.handleDownloadImage} style={{ width: "100%" }}>Download as Image</button>
               </TableCell>
             </TableRow>
           </TableBody>
