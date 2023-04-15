@@ -72,7 +72,8 @@ class App extends React.Component {
       isEpic: false,
       giantWeapons: false,
       berserker: false,
-      qualities: []
+      qualities: [],
+      showTalentsAndSpecializations: false
     };
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleThreatLevelChange = this.handleThreatLevelChange.bind(this);
@@ -94,6 +95,7 @@ class App extends React.Component {
     this.handleDamageChange = this.handleDamageChange.bind(this);
     this.handleDownloadImage = this.handleDownloadImage.bind(this);
     this.handleQualityChange = this.handleQualityChange.bind(this);
+    this.handleShowTalentsAndSpecializationsChange = this.handleShowTalentsAndSpecializationsChange.bind(this);
   }
 
 
@@ -304,6 +306,10 @@ class App extends React.Component {
 
   async componentDidMount() {
 
+  }
+
+  handleShowTalentsAndSpecializationsChange() {
+    this.setState({ showTalentsAndSpecializations: !this.state.showTalentsAndSpecializations })
   }
 
   async handleDownloadImage() {
@@ -746,6 +752,11 @@ class App extends React.Component {
 
                     <input type="radio" name="ar" value="rand" id="rand" checked={this.state.selectedArmor === "rand"} onChange={this.handleArmorChange} />
                     <label htmlFor="rand">Random</label>
+                  </label>
+                  <br></br>
+                  <label>
+                    Show Specialization and Talent options:
+                    <input type="checkbox" checked={this.state.showTalentsAndSpecializationsChange} onChange={this.handleShowTalentsAndSpecializationsChange} />
                   </label>
                   <label>
                     <br></br><br></br>
@@ -1559,25 +1570,29 @@ class App extends React.Component {
                                 </EditTextarea>
                               </TableCell>
                             </TableRow>
-                            <TableRow>
-                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                Talents:
-                              </TableCell>
-                              <TableCell>
-                                <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
-                                </EditTextarea>
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell style={{ width: "20%", fontWeight: 700 }}>
-                                Specializations:
-                              </TableCell>
-                              <TableCell>
-                                <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
+                            {this.state.showTalentsAndSpecializations &&
+                              <TableRow>
+                                <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                  Talents:
+                                </TableCell>
+                                <TableCell>
+                                  <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
+                                  </EditTextarea>
+                                </TableCell>
+                              </TableRow>
+                            }
+                            {this.state.showTalentsAndSpecializations &&
+                              <TableRow>
+                                <TableCell style={{ width: "20%", fontWeight: 700 }}>
+                                  Specializations:
+                                </TableCell>
+                                <TableCell>
+                                  <EditTextarea style={{ width: "98%", borderWidth: 1, padding: 10, backgroundColor: "#ffffff90", overflow: "visible" }} placeholder='...'>
 
-                                </EditTextarea>
-                              </TableCell>
-                            </TableRow>
+                                  </EditTextarea>
+                                </TableCell>
+                              </TableRow>
+                            }
 
                             {this.state.berserker &&
                               <TableRow>
