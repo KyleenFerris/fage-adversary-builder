@@ -49,6 +49,7 @@ class App extends React.Component {
       perception: 0,
       strength: 0,
       willpower: 0,
+      spellpower: 12,
       accuracyWeapons: [],
       fightingWeapons: [],
       weaponFocuses: [],
@@ -103,11 +104,11 @@ class App extends React.Component {
   //threatLevels = ['Minor', 'Moderate', 'Major', 'Dire', 'Legendary'];
   //values are the number of ability advancements it gets, as a range
   threatLevels = [
-    { label: 'Minor', value: [10, 20], armor: [2, 3] },
-    { label: 'Moderate', value: [12, 30], armor: [3, 5] },
-    { label: 'Major', value: [15, 35], armor: [4, 6] },
-    { label: 'Dire', value: [15, 40], armor: [6, 9] },
-    { label: 'Legendary', value: [20, 40], armor: [7, 10] }
+    { label: 'Minor', value: [10, 20], armor: [2, 3], baseSP: 12 },
+    { label: 'Moderate', value: [12, 30], armor: [3, 5], baseSP: 12 },
+    { label: 'Major', value: [15, 35], armor: [4, 6], baseSP: 14 },
+    { label: 'Dire', value: [15, 40], armor: [6, 9], baseSP: 14 },
+    { label: 'Legendary', value: [20, 40], armor: [7, 10], baseSP: 14 }
   ]
 
   //arcane blast needs to be use willpower mod instead of perception
@@ -345,6 +346,7 @@ class App extends React.Component {
     this.setState({ advancements: 0 })
     this.setState({ selectedThreatLevel: event.target.value })
     this.setState({ threatLevelLabel: this.threatLevels[event.target.value].label });
+    this.setState({ spellpower: this.threatLevels[event.target.value].baseSP });
 
     this.resetWeaponStateDamage()
 
@@ -1401,6 +1403,16 @@ class App extends React.Component {
                                   Armor
                                 </Text>
                               </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Magic Points
+                                </Text>
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                                  Spellpower
+                                </Text>
+                              </TableCell>
                             </TableRow>
                             <TableRow style={{ backgroundColor: "#e3fcf2" }}>
                               <TableCell style={{ textAlign: 'center' }}>
@@ -1411,6 +1423,12 @@ class App extends React.Component {
                               </TableCell>
                               <TableCell style={{ textAlign: 'center' }}>
                                 <EditTextarea defaultValue={this.state.armor.toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue="∞" style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
+                              </TableCell>
+                              <TableCell style={{ textAlign: 'center' }}>
+                                <EditTextarea defaultValue={(this.state.spellpower + this.state.willpower).toString()} style={{ fontSize: 20, padding: 5, maxHeight: 20 }} />
                               </TableCell>
                             </TableRow>
                           </TableBody>
